@@ -3,6 +3,78 @@
 {% block title %}Home - Monede{% endblock %}
 
 {% block content %}
-    <h1>Bem-vindo ao Monede!</h1>
-    <p>Monitore suas finanças de forma inteligente.</p>
+    <h1 class="text-2xl font-bold mb-4">Bem-vindo ao Monede!</h1>
+    <p class="mb-6">Monitore suas finanças de forma inteligente.</p>
+
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-6">
+        <!-- Card de Receita -->
+        <div class="bg-white p-6 rounded-lg shadow-md">
+            <h2 class="text-lg font-semibold">Receita</h2>
+            <p class="text-2xl font-bold">R$ 3.234,78</p>
+            <p class="text-sm text-green-600">+2,05% do último mês</p>
+        </div>
+        <!-- Card de Despesas -->
+        <div class="bg-white p-6 rounded-lg shadow-md">
+            <h2 class="text-lg font-semibold">Despesas</h2>
+            <p class="text-2xl font-bold">R$ 2.315,44</p>
+            <p class="text-sm text-red-600">-7,13% do último mês</p>
+        </div>
+        <!-- Card de Balanço -->
+        <div class="bg-white p-6 rounded-lg shadow-md">
+            <h2 class="text-lg font-semibold">Balanço</h2>
+            <p class="text-2xl font-bold">R$ 1.115,60</p>
+            <p class="text-sm text-green-600">+3,14% do último mês</p>
+        </div>
+        <!-- Card de A Receber -->
+        <div class="bg-white p-6 rounded-lg shadow-md">
+            <h2 class="text-lg font-semibold">A Receber</h2>
+            <p class="text-2xl font-bold">R$ 3.234,78</p>
+        </div>
+    </div>
+
+    <!-- Cartões -->
+    <section class="mb-6">
+        <h2 class="text-lg font-semibold mb-4">Cartões</h2>
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+            <div class="bg-white p-4 rounded-lg shadow-md">
+                <h3 class="text-md font-semibold">Mastercard</h3>
+                <p>R$ 0,00 - Aberta</p>
+            </div>
+            <div class="bg-white p-4 rounded-lg shadow-md">
+                <h3 class="text-md font-semibold">Picpay</h3>
+                <p>R$ 0,00 - Novembro</p>
+            </div>
+            <!-- Adicione mais cartões conforme necessário -->
+        </div>
+    </section>
+
+    <!-- Últimas Transações -->
+    <section>
+        <h2 class="text-lg font-semibold mb-4">Últimas Transações</h2>
+        <table class="min-w-full bg-white border border-gray-300">
+            <thead>
+                <tr>
+                    <th class="border-b-2 border-gray-300 p-4 text-left">Data</th>
+                    <th class="border-b-2 border-gray-300 p-4 text-left">Título</th>
+                    <th class="border-b-2 border-gray-300 p-4 text-left">Valor</th>
+                    <th class="border-b-2 border-gray-300 p-4 text-left">Tipo</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr class="hover:bg-gray-100">
+                    <td class="border-b border-gray-300 p-4">02/10/2024</td>
+                    <td class="border-b border-gray-300 p-4">Salário</td>
+                    <td class="border-b border-gray-300 p-4">R$ 5.000,00</td>
+                    <td class="border-b border-gray-300 p-4">Receita</td>
+                </tr>
+                <tr class="hover:bg-gray-100">
+                    <td class="border-b border-gray-300 p-4">02/10/2024</td>
+                    <td class="border-b border-gray-300 p-4">Salário</td>
+                    <td class="border-b border-gray-300 p-4">R$ 5.000,00</td>
+                    <td class="border-b border-gray-300 p-4">Despesa</td>
+                </tr>
+                <!-- Adicione mais transações conforme necessário -->
+            </tbody>
+        </table>
+    </section>
 {% endblock %}

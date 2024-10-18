@@ -6,23 +6,16 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>{% block title %}Monede{% endblock %}</title>
-    <link rel="stylesheet" href="{% static 'css/styles.css' %}">
+    <link href="{% static 'css/output.css' %}" rel="stylesheet">
 </head>
-<body>
+<body class="bg-gray-100">
     <header>
-        <nav>
-            <ul>
-                <li><a href="{% url 'home' %}">Home</a></li>
-                <li><a href="{% url 'transacoes' %}">Transações</a></li>
-                <li><a href="{% url 'relatorios' %}">Relatórios</a></li>
-                <li><a href="{% url 'metas' %}">Metas</a></li>
-                <li><a href="{% url 'perfil' %}">Perfil</a></li>
-            </ul>
-        </nav>
+        {% include 'components/nav.html' %}
     </header>
 
-    <main>
+    <main class="max-w-7xl mx-auto p-6">
         {% block content %}
+
         <!-- O conteúdo específico da página será inserido aqui -->
         {% endblock %}
     </main>
