@@ -1,24 +1,44 @@
+from django.contrib.auth.models import AbstractUser
 from django.db import models
-from django.contrib.auth.models import User  
-
 
 class Transacao(models.Model):
-    CATEGORIAS = [
+    TIPOS = [
         ('RECEITA', 'Receita'),
         ('DESPESA', 'Despesa'),
     ]
-    TIPOS = [
+    CATEGORIAS = [
         ('CONTA_FIXA', 'Conta Fixa'),
         ('COMPRA', 'Compra'),
         ('INVESTIMENTO', 'Investimento'),
         ('LAZER', 'Lazer'),
     ]
-    usuario = models.ForeignKey(User, on_delete=models.CASCADE)
     valor = models.DecimalField(max_digits=10, decimal_places=2)
-    categoria = models.CharField(max_length=10, choices=CATEGORIAS)
-    tipo = models.CharField(max_length=15, choices=TIPOS)
+    tipo = models.CharField(max_length=10, choices=TIPOS)  # Tipo é Receita ou Despesa
+    categoria = models.CharField(max_length=15, choices=CATEGORIAS)  # Categoria tem tipos detalhados
     descricao = models.TextField(null=True, blank=True)
     data = models.DateField()
 
     def __str__(self):
-        return f'{self.usuario.username} - {self.categoria}/{self.tipo}: {self.valor}'
+        return f'{self.tipo}/{self.categoria}: {self.valor}'
+
+
+class Categoria(models.Model):
+    nome = models.CharField(max_length=100)
+    descricao = models.TextField(blank=True, null=True)
+
+    def __str__(self):
+        return self.nome
+
+
+class Usuario(AbstractUser):
+    # Outros campos personalizados
+    groups = models.ManyToManyField(
+        'auth.Group',
+        related_name='custom_user_set',
+        blank=True
+    )
+    user_permissions = models.ManyToManyField(
+        'auth.Permission',
+        related_name='custom_user_permissions_set',
+        blank=True
+    )
