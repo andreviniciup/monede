@@ -1,6 +1,8 @@
 from django.contrib.auth.models import AbstractUser
 from django.db import models
 
+from django.db import models
+
 class Transacao(models.Model):
     TIPOS = [
         ('RECEITA', 'Receita'),
@@ -13,13 +15,15 @@ class Transacao(models.Model):
         ('LAZER', 'Lazer'),
     ]
     valor = models.DecimalField(max_digits=10, decimal_places=2)
-    tipo = models.CharField(max_length=10, choices=TIPOS)  # Tipo é Receita ou Despesa
-    categoria = models.CharField(max_length=15, choices=CATEGORIAS)  # Categoria tem tipos detalhados
+    tipo = models.CharField(max_length=10, choices=TIPOS)
+    categoria = models.CharField(max_length=15, choices=CATEGORIAS)
+    nome = models.CharField(max_length=100, null=True)
     descricao = models.TextField(null=True, blank=True)
-    data = models.DateField()
+    data = models.DateTimeField(auto_now_add=True)  # Define data e hora automaticamente
 
     def __str__(self):
         return f'{self.tipo}/{self.categoria}: {self.valor}'
+
 
 
 class Categoria(models.Model):

@@ -1,0 +1,236 @@
+
+.TransaEs {
+  max-width: 1150px;
+  margin: auto;
+  padding: 20px 10px;
+}
+
+.Conteudo {
+  width: 950px;
+  padding-top: 70px;
+  padding-bottom: 70px;
+  display: inline-flex;
+  flex-direction: column;
+  justify-content: flex-start;
+  align-items: flex-start;
+  gap: 20px;
+}
+
+.Frame212 {
+  align-self: stretch;
+  justify-content: space-between;
+  align-items: center;
+  display: inline-flex;
+}
+
+.NomePagina {
+  color: black;
+  font-size: 30px;
+  font-family: Arial Rounded MT Bold;
+  font-weight: 400;
+  word-wrap: break-word;
+}
+
+.BotaoAddTransacao {
+  padding-left: 10px;
+  padding-right: 10px;
+  padding-top: 7px;
+  padding-bottom: 7px;
+  background: #3F9DAC;
+  border-radius: 20px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 5px;
+}
+
+.Vector {
+  width: 8px;
+  height: 8px;
+  border: 2px #D0EAEE solid;
+}
+
+.AdicionarTransaO {
+  color: #D0EAEE;
+  font-size: 12px;
+  font-family: Arial Rounded MT Bold;
+  font-weight: 400;
+  word-wrap: break-word;
+}
+
+.Frame211 {
+  align-self: stretch;
+  height: 390px;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+  align-items: center;
+  gap: 26px;
+}
+
+.Frame210 {
+  justify-content: flex-start;
+  align-items: center;
+  gap: 224px;
+  display: inline-flex;
+}
+
+.Frame209, .Frame208 {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.DropdownButtonUltimos7dias, .DatePickerButtonInicial, .DatePickerButtonFinal, .BotaoFiltros, .BarraPesquisa {
+  padding: 8px 15px;
+  background: #F2F2F2;
+  border-radius: 10px;
+  border: 1px #BEBEBE solid;
+  display: flex;
+  align-items: center;
+  gap: 5px;
+}
+
+.Ltimos7Dias, .DataInicial, .DataFinal, .Filtros, .Pesquisar {
+  color: #BEBEBE;
+  font-size: 12px;
+  font-family: Arial Rounded MT Bold;
+  font-weight: 400;
+  word-wrap: break-word;
+}
+
+.Vector1 {
+  width: 6.87px;
+  height: 3px;
+  border: 2px #BEBEBE solid;
+}
+
+.TabelaTransacoes {
+  align-self: stretch;
+  height: 334px;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+  align-items: center;
+  gap: 15px;
+}
+
+.TabelaCategorias {
+  width: 950px;
+  padding-left: 75px;
+  justify-content: flex-start;
+  align-items: flex-start;
+  display: inline-flex;
+}
+
+.Item, .Data, .Valor, .Tipo, .BancoConta, .Categoria {
+  color: #212121;
+  font-size: 12px;
+  font-family: Arial Rounded MT Bold;
+  font-weight: 400;
+  word-wrap: break-word;
+}
+
+.TabelaItens {
+  justify-content: flex-start;
+  align-items: center;
+  gap: 51px;
+  display: inline-flex;
+}
+
+.Frame188, .Frame189, .Frame190, .Frame191, .Frame192, .Frame193, .Frame202 {
+  padding-left: 10px;
+  padding-right: 10px;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  display: inline-flex;
+}
+
+.Frame164, .Frame175, .Frame179, .Frame183, .Frame187 {
+  align-self: stretch;
+  justify-content: flex-start;
+  align-items: center;
+  gap: 5px;
+  display: inline-flex;
+}
+
+.Frame10 {
+  width: 45px;
+  height: 45px;
+  padding: 15px;
+  background: #F2F2F2;
+  border-radius: 15px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 10px;
+}
+
+.Image1 {
+  width: 20px;
+  height: 20px;
+}
+
+.AppleStore {
+  color: black;
+  font-size: 14px;
+  font-family: Arial Rounded MT Bold;
+  font-weight: 400;
+  word-wrap: break-word;
+}
+
+.Out2024, .R719900, .R19900, .R24965, .Despesa, .Receita, .Nubank, .Ita {
+  color: black;
+  font-size: 14px;
+  font-family: Arial Rounded MT Bold;
+  font-weight: 400;
+  word-wrap: break-word;
+}
+
+.Despesa, .Receita {
+  color: #810C13;
+}
+
+.Compras, .Transporte {
+  font-size: 10px;
+  font-family: Arial Rounded MT Bold;
+  font-weight: 400;
+  word-wrap: break-word;
+}
+
+.Frame165, .Frame173, .Frame177, .Frame181, .Frame185 {
+  border-radius: 999px;
+  justify-content: center;
+  align-items: center;
+  gap: 10px;
+}
+
+.Frame166, .Frame172, .Frame176, .Frame180, .Frame184 {
+  padding: 3px 10px;
+  background: #E9A2D7;
+  border-radius: 999px;
+  justify-content: center;
+  align-items: center;
+  gap: 4px;
+  display: inline-flex;
+}
+
+.Vector {
+  width: 8.52px;
+  height: 10px;
+  border: 1.5px solid #9F2781;
+}
+
+.Vector.Transporte {
+  width: 11.08px;
+  height: 8px;
+  border: 1.5px solid #C89558;
+}
+
+.Ellipse10, .Ellipse11, .Ellipse12 {
+  width: 3px;
+  height: 3px;
+  background: #999999;
+  border-radius: 9999px;
+}

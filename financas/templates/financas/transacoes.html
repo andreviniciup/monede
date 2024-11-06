@@ -1,88 +1,77 @@
 {% extends 'financas/base.html' %}
+{% load static %}
 
-{% block title %}Transações - Monede{% endblock %}
+{% block extra_css %}
+  <link rel="stylesheet" href="{% static 'financas/css/transacoes.css' %}">
+{% endblock %}
+
+
+{% block title %}Transações{% endblock %}
 
 {% block content %}
-    <h2>Transações</h2>
-    {% if messages %}
-    <ul class="messages">
-        {% for message in messages %}
-            <li{% if message.tags %} class="{{ message.tags }}"{% endif %}>{{ message }}</li>
-        {% endfor %}
-    </ul>
-    {% endif %}
-
-<!-- Listagem de Transações -->
-<section>
-    <h2 class="text-lg font-semibold mb-4">Últimas Transações</h2>
-    <table class="min-w-full bg-white border border-gray-300">
-        <thead>
-            <tr>
-                <th class="border-b-2 border-gray-300 p-4 text-left">Data</th>
-                <th class="border-b-2 border-gray-300 p-4 text-left">Título</th>
-                <th class="border-b-2 border-gray-300 p-4 text-left">Valor</th>
-                <th class="border-b-2 border-gray-300 p-4 text-left">Tipo</th>
-            </tr>
-        </thead>
-        <tbody>
-            {% for transacao in transacoes %}
-            <tr class="hover:bg-gray-100">
-                <td class="border-b border-gray-300 p-4">{{ transacao.data }}</td>
-                <td class="border-b border-gray-300 p-4">{{ transacao.descricao }}</td>
-                <td class="border-b border-gray-300 p-4">{{ transacao.valor }}</td>
-                <td class="border-b border-gray-300 p-4">{{ transacao.tipo }}</td>
-            </tr>
-            {% endfor %}
-        </tbody>
-    </table>
-</section>
-
-    <!-- Botão para abrir o modal -->
-    <button id="openModalBtn" class="relative rounded-md bg-indigo-600 px-3 py-2 text-sm font-medium text-white hover:bg-indigo-500 focus:outline-none focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-gray-800">Adicionar Nova Transação</button>
-
-    <!-- Modal -->
-    <div id="modal" style="display:none;">
-        <div class="modal-content bg-white shadow-md rounded p-6">
-            <span id="closeModalBtn" class="text-gray-500 float-right cursor-pointer">&times;</span>
-            <h3 class="text-lg font-semibold mb-4">Adicionar Nova Transação</h3>
-            <form method="POST" class="space-y-4">
-                {% csrf_token %}
-                {{ form.as_p }}
-                <button type="submit" class="bg-green-500 text-white px-4 py-2 rounded">Adicionar</button>
-            </form>
-        </div>
+<div class="TransaEs">
+  <div class="Conteudo">
+    <div class="Frame212">
+      <div class="NomePagina">Transações</div>
+      <div class="BotaoAddTransacao">
+        <div class="Vector"></div>
+        <div class="AdicionarTransaO">Adicionar Transação</div>
+      </div>
     </div>
-
-    <!-- Estilos para o modal -->
-    <style>
-        .modal-content {
-            background-color: white;
-            padding: 20px;
-            border-radius: 5px;
-            max-width: 400px;
-            margin: 100px auto;
-            box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
-        }
-    </style>
-
-    <!-- Script para abrir e fechar o modal -->
-    <script>
-        var modal = document.getElementById('modal');
-        var openModalBtn = document.getElementById('openModalBtn');
-        var closeModalBtn = document.getElementById('closeModalBtn');
-
-        openModalBtn.onclick = function() {
-            modal.style.display = 'block';
-        }
-
-        closeModalBtn.onclick = function() {
-            modal.style.display = 'none';
-        }
-
-        window.onclick = function(event) {
-            if (event.target == modal) {
-                modal.style.display = 'none';
-            }
-        }
-    </script>
+    <div class="Frame211">
+      <div class="Frame210">
+        <div class="Frame209">
+          <div class="DropdownButtonUltimos7dias" onclick="toggleDropdown()">
+            <div class="Ltimos7Dias">Últimos 7 Dias</div>
+            <div>
+              <img src="{% static 'icons\seta-transacoes.svg' %}" alt="Ícone de seta">
+            </div>
+          </div>
+          <div id="dropdownContent" style="display: none;">
+            <ul>
+              <li>Últimos 7 Dias</li>
+              <li>Últimos 15 Dias</li>
+              <li>Últimos 30 Dias</li>
+            </ul>
+          </div>
+          
+          <div class="DatePickerButtonInicial">
+            <div class="DataInicial">Data Inicial</div>
+            <div class="Vector"></div>
+          </div>
+          <div class="DatePickerButtonFinal">
+            <div class="DataFinal">Data Final</div>
+            <div class="Vector"></div>
+          </div>
+        </div>
+        <div class="Frame208">
+          <div class="BotaoFiltros">
+            <div class="Filtros">Filtros</div>
+            <div class="Vector"></div>
+          </div>
+          <div class="BarraPesquisa">
+            <div class="Pesquisar">Pesquisar</div>
+            <div class="Vector"></div>
+          </div>
+        </div>
+      </div>
+      <div class="TabelaTransacoes">
+        <div class="TabelaCategorias">
+          <div class="Item">Item</div>
+          <div class="Data">Data</div>
+          <div class="Valor">Valor</div>
+          <div class="Tipo">Tipo</div>
+          <div class="BancoConta">Banco/Conta</div>
+          <div class="Categoria">Categoria</div>
+        </div>
+        <div class="TabelaItens">
+          <!-- Itens da tabela -->
+          <!-- Adicione os itens da tabela como desejado -->
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+  
+<script src="js/script.js"></script>
 {% endblock %}

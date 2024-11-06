@@ -1,0 +1,77 @@
+{% extends 'financas/base.html' %}
+
+{% load static %}
+
+{% block extra_css %}
+  <link rel="stylesheet" href="{% static 'financas/css/plano_de_gastos.css' %}">
+{% endblock %}
+
+{% block title %}Plano de gastos{% endblock %}
+
+{% block content %}
+<div class="plano-gastos">
+    <div class="titulo-gastos">
+      <h1>Plano de gastos</h1>
+      <p>Novembro 2024</p>
+    </div>
+  
+    <div class="conteudo-principal">
+      <div class="grafico-pizza">
+        <div class="fatia amarelo"></div>
+        <div class="fatia laranja"></div>
+        <div class="fatia roxo"></div>
+        <div class="fatia azul"></div>
+      </div>
+  
+      <div class="detalhes-gastos">
+        <div class="header-detalhes">
+          <span>Categorias</span>
+          <span>Gastos Total</span>
+        </div>
+        <div class="categoria">
+          <div class="categoria-descricao">
+            <div class="cor-categoria azul"></div>
+            <span>Compras</span>
+          </div>
+          <span>R$ 4.504</span>
+        </div>
+        <div class="categoria">
+          <div class="categoria-descricao">
+            <div class="cor-categoria amarelo"></div>
+            <span>Comida</span>
+          </div>
+          <span>R$ 1.7406</span>
+        </div>
+        <div class="categoria">
+          <div class="categoria-descricao">
+            <div class="cor-categoria roxo"></div>
+            <span>Transporte</span>
+          </div>
+          <span>R$ 509,49</span>
+        </div>
+        <div class="categoria">
+          <div class="categoria-descricao">
+            <div class="cor-categoria laranja"></div>
+            <span>Streaming</span>
+          </div>
+          <span>R$ 398,49</span>
+        </div>
+        <div class="orcamento">
+          <div>
+            <h2>R$10.435</h2>
+            <p>Orçamento total</p>
+          </div>
+          <div>
+            <h2>R$7.980</h2>
+            <p>Gastos total</p>
+          </div>
+          <div>
+            <h2>R$2.455</h2>
+            <p>Saldo Restante</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  
+{% endblock %}

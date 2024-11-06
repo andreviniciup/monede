@@ -16,11 +16,10 @@ def registrar(request):
     return render(request, 'registrar.html', {'form': form})
 
 
-def home_view(request):
-    return render(request, 'financas/home.html')
+def inicio_view(request):
+    transacoes = Transacao.objects.order_by('-data')[:5]
+    return render(request, 'financas/inicio.html', {'transacoes': transacoes})
 
-
-from django.contrib import messages
 
 def transacoes_view(request):
     transacoes = Transacao.objects.all()
@@ -46,6 +45,15 @@ def relatorios_view(request):
 def metas_view(request):
     return render(request, 'financas/metas.html')
 
-def perfil_view(request):
-    return render(request, 'financas/perfil.html')
+def pagamentos_view(request):
+    return render(request, 'financas/pagamentos.html')
+
+def plano_de_gastos_view(request):
+    return render(request, 'financas/plano_de_gastos.html')
+
+def investimento_view(request):
+    return render(request, 'financas/investimento.html')
+
+def configuracoes_view(request):
+    return render(request, 'financas/configuracoes.html')
 
