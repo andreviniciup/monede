@@ -10,68 +10,155 @@
 
 {% block content %}
 <div class="plano-gastos">
-    <div class="titulo-gastos">
-      <h1>Plano de gastos</h1>
-      <p>Novembro 2024</p>
-    </div>
-  
-    <div class="conteudo-principal">
-      <div class="grafico-pizza">
-        <div class="fatia amarelo"></div>
-        <div class="fatia laranja"></div>
-        <div class="fatia roxo"></div>
-        <div class="fatia azul"></div>
+  <div class="container">
+      <div class="nome-pagina">
+          <h1>Plano de gastos</h1>
+          <div class="data">Novembro 2024</div>
       </div>
-  
-      <div class="detalhes-gastos">
-        <div class="header-detalhes">
-          <span>Categorias</span>
-          <span>Gastos Total</span>
-        </div>
-        <div class="categoria">
-          <div class="categoria-descricao">
-            <div class="cor-categoria azul"></div>
-            <span>Compras</span>
+
+      <div class="container-grafico-geral">
+          <div class="doughnut">
+              <div class="slice slice-yellow"></div>
+              <div class="slice slice-orange"></div>
+              <div class="slice slice-purple"></div>
+              <div class="slice slice-blue"></div>
           </div>
-          <span>R$ 4.504</span>
-        </div>
-        <div class="categoria">
-          <div class="categoria-descricao">
-            <div class="cor-categoria amarelo"></div>
-            <span>Comida</span>
+
+          <div class="gastos-info">
+              <div class="gastos-header">
+                  <div class="categorias">categorias</div>
+                  <div class="gastos-total">gastos total</div>
+              </div>
+
+              <div class="gastos-list">
+                  <div class="gasto-item">
+                      <div class="categoria">
+                          <span class="dot blue"></span>
+                          <span>compras</span>
+                      </div>
+                      <div class="valor">R$ 4.504</div>
+                  </div>
+                  <div class="gasto-item">
+                      <div class="categoria">
+                          <span class="dot yellow"></span>
+                          <span>comida</span>
+                      </div>
+                      <div class="valor">R$ 1.7406</div>
+                  </div>
+                  <div class="gasto-item">
+                      <div class="categoria">
+                          <span class="dot purple"></span>
+                          <span>Transporte</span>
+                      </div>
+                      <div class="valor">R$ 509,49</div>
+                  </div>
+                  <div class="gasto-item">
+                      <div class="categoria">
+                          <span class="dot orange"></span>
+                          <span>streaming</span>
+                      </div>
+                      <div class="valor">R$ 398,49</div>
+                  </div>
+              </div>
+
+              <div class="resumo-gastos">
+                  <div class="resumo-item">
+                      <div class="valor">R$10.435</div>
+                      <div class="label">orçamento total</div>
+                  </div>
+                  <div class="resumo-item">
+                      <div class="valor red">R$7.980</div>
+                      <div class="label">gastos total</div>
+                  </div>
+                  <div class="resumo-item">
+                      <div class="valor green">R$2.455</div>
+                      <div class="label">Saldo Restante</div>
+                  </div>
+              </div>
           </div>
-          <span>R$ 1.7406</span>
-        </div>
-        <div class="categoria">
-          <div class="categoria-descricao">
-            <div class="cor-categoria roxo"></div>
-            <span>Transporte</span>
-          </div>
-          <span>R$ 509,49</span>
-        </div>
-        <div class="categoria">
-          <div class="categoria-descricao">
-            <div class="cor-categoria laranja"></div>
-            <span>Streaming</span>
-          </div>
-          <span>R$ 398,49</span>
-        </div>
-        <div class="orcamento">
-          <div>
-            <h2>R$10.435</h2>
-            <p>Orçamento total</p>
-          </div>
-          <div>
-            <h2>R$7.980</h2>
-            <p>Gastos total</p>
-          </div>
-          <div>
-            <h2>R$2.455</h2>
-            <p>Saldo Restante</p>
-          </div>
-        </div>
       </div>
-    </div>
+
+      <div class="container-despesas-planejadas">
+          <div class="titulo">Despesas planejadas</div>
+          <div class="despesas-grid">
+              <div class="despesa-item">
+                  <div class="icon yellow-bg">
+                      <div class="vector yellow-border"></div>
+                  </div>
+                  <div class="info">
+                      <div class="nome">comida</div>
+                      <div class="progresso">
+                          <div class="valor-faltante">R$1.000 faltam</div>
+                          <div class="barra-progresso yellow-bg">
+                              <div class="progresso-atual yellow"></div>
+                          </div>
+                      </div>
+                  </div>
+              </div>
+              <!-- Similar structure for other expense items -->
+              <!-- Transport -->
+              <div class="despesa-item">
+                  <div class="icon purple-bg">
+                      <div class="vector purple-border"></div>
+                  </div>
+                  <div class="info">
+                      <div class="nome">Transporte</div>
+                      <div class="progresso">
+                          <div class="valor-faltante">R$1.000 faltam</div>
+                          <div class="barra-progresso purple-bg">
+                              <div class="progresso-atual purple"></div>
+                          </div>
+                      </div>
+                  </div>
+              </div>
+              <!-- Streaming -->
+              <div class="despesa-item">
+                  <div class="icon orange-bg">
+                      <div class="vector orange-border"></div>
+                  </div>
+                  <div class="info">
+                      <div class="nome">streaming</div>
+                      <div class="progresso">
+                          <div class="valor-faltante">R$1.000 faltam</div>
+                          <div class="barra-progresso orange-bg">
+                              <div class="progresso-atual orange"></div>
+                          </div>
+                      </div>
+                  </div>
+              </div>
+              <!-- Games -->
+              <div class="despesa-item">
+                  <div class="icon green-bg">
+                      <div class="vector green-border"></div>
+                  </div>
+                  <div class="info">
+                      <div class="nome">Jogos</div>
+                      <div class="progresso">
+                          <div class="valor-faltante">R$1.000 faltam</div>
+                          <div class="barra-progresso green-bg">
+                              <div class="progresso-atual green"></div>
+                          </div>
+                      </div>
+                  </div>
+              </div>
+              <!-- Shopping -->
+              <div class="despesa-item">
+                  <div class="icon blue-bg">
+                      <div class="vector blue-border"></div>
+                  </div>
+                  <div class="info">
+                      <div class="nome">Compras</div>
+                      <div class="progresso">
+                          <div class="valor-faltante">R$1.000 faltam</div>
+                          <div class="barra-progresso blue-bg">
+                              <div class="progresso-atual blue"></div>
+                          </div>
+                      </div>
+                  </div>
+              </div>
+          </div>
+      </div>
   </div>
+</div>
   
 {% endblock %}

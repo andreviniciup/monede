@@ -1,0 +1,272 @@
+
+.payments {
+    max-width: 1150px;
+    margin: auto;
+    padding: 70px 10px;
+}
+
+.payments-container {
+    padding: 70px 0;
+    display: flex;
+    justify-content: center;
+    gap: 35px;
+}
+
+.payments-content {
+    width: 650px;
+    display: flex;
+    flex-direction: column;
+    gap: 25px;
+}
+
+/* Header styles */
+.header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.page-title {
+    color: black;
+    font-size: 30px;
+    font-weight: 400;
+    margin: 0;
+}
+
+.add-payment-btn {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    background: #3F9DAC;
+    border-radius: 20px;
+    padding: 7px 10px;
+    border: none;
+    cursor: pointer;
+}
+
+.add-icon {
+    width: 8px;
+    height: 8px;
+    border: 2px solid #D0EAEE;
+}
+
+.add-payment-btn span:last-child {
+    color: #D0EAEE;
+    font-size: 12px;
+}
+
+/* Payment section styles */
+.payment-section {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.section-title {
+    font-size: 20px;
+    color: black;
+    margin: 0;
+}
+
+.section-title-gray {
+    color: #969696;
+}
+
+/* Payment item styles */
+.payment-item {
+    background: white;
+    border-radius: 10px;
+    border: 1px solid #BEBEBE;
+    padding: 1px 13px;
+}
+
+.payment-content {
+    display: flex;
+    align-items: center;
+    gap: 7px;
+    padding: 10px;
+}
+
+.date-box {
+    width: 50px;
+    height: 50px;
+    background: #F2F2F2;
+    border-radius: 10px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+}
+
+.date-box .month {
+    color: #3F9DAC;
+    font-size: 12px;
+}
+
+.date-box .day {
+    color: #3F9DAC;
+    font-size: 20px;
+}
+
+.payment-info {
+    flex: 1;
+    padding: 5px;
+}
+
+.payment-info .title {
+    color: #212121;
+    font-size: 14px;
+}
+
+.payment-details {
+    display: flex;
+    align-items: center;
+    gap: 3px;
+}
+
+.payment-type {
+    background: #F0F0F0;
+    border-radius: 4px;
+    padding: 2px 9px;
+    color: #969696;
+    font-size: 10px;
+}
+
+.payment-date {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    padding: 2px;
+    color: #969696;
+    font-size: 12px;
+}
+
+.calendar-icon {
+    width: 9px;
+    height: 9px;
+    border: 1.5px solid #969696;
+}
+
+/* Payment value styles */
+.payment-value {
+    width: 73px;
+    text-align: right;
+}
+
+.payment-frequency {
+    display: block;
+    color: #BEBEBE;
+    font-size: 14px;
+}
+
+.payment-amount {
+    color: #1E1E1E;
+    font-size: 18px;
+}
+
+/* Action menu styles */
+.action-menu {
+    width: 5px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 2px;
+}
+
+.dot {
+    width: 4px;
+    height: 4px;
+    background: #BEBEBE;
+    border-radius: 50%;
+}
+
+/* Payment alert styles */
+.payment-alert {
+    background: #F0F0F0;
+    border-radius: 10px;
+    padding: 14px 28px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.payment-alert span {
+    color: #434343;
+    font-size: 12px;
+}
+
+.pay-bill-btn {
+    background: #C7C7C7;
+    border: 1px solid #888888;
+    border-radius: 10px;
+    padding: 5px 10px;
+    color: #888888;
+    font-size: 10px;
+    cursor: pointer;
+}
+
+/* Calendar styles */
+.calendar {
+    width: 250px;
+    background: white;
+    border-radius: 10px;
+    padding: 10px;
+}
+
+.calendar-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 5px;
+}
+
+.current-date {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    padding: 5px 10px;
+}
+
+.current-date .month {
+    color: black;
+    font-size: 20px;
+}
+
+.current-date .year {
+    color: black;
+    font-size: 10px;
+}
+
+.calendar-nav {
+    display: flex;
+    gap: 6px;
+}
+
+.nav-btn {
+    width: 20px;
+    height: 20px;
+    border: none;
+    background: transparent;
+    cursor: pointer;
+    padding: 6px 8px;
+    border-radius: 10px;
+}
+
+.nav-btn::before {
+    content: '';
+    display: block;
+    width: 4px;
+    height: 8px;
+    border: 2px solid #BEBEBE;
+}
+
+.nav-btn.prev {
+    transform: rotate(180deg);
+}
+
+/* Calendar body styles */
+.calendar-body {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}

@@ -1,8 +1,89 @@
 {% extends 'financas/base.html' %}
 
-{% block title %}Configurações - Monede{% endblock %}
+{% load static %}
+
+{% block extra_css %}
+  <link rel="stylesheet" href="{% static 'financas/css/pagamentos.css' %}">
+{% endblock %}
+
+{% block title %}Pagamentos{% endblock %}
 
 {% block content %}
-    <h1>Perfil e Configurações</h1>
-    <p>Gerencie suas informações de perfil e preferências aqui.</p>
+<div class="payments">
+    <div class="payments-container">
+        <div class="payments-content">
+            <div class="header">
+                <h1 class="page-title">Pagamentos</h1>
+                <button class="add-payment-btn">
+                    <span class="add-icon"></span>
+                    <span>Adicionar Pagamento</span>
+                </button>
+            </div>
+
+            <div class="payment-section">
+                <h2 class="section-title">Hoje</h2>
+                <div class="payment-group">
+                    <div class="payment-item">
+                        <div class="payment-content">
+                            <div class="date-box">
+                                <span class="month">Out</span>
+                                <span class="day">10</span>
+                            </div>
+                            <div class="payment-info">
+                                <div class="title">Claro | Plano</div>
+                                <div class="payment-details">
+                                    <span class="payment-type">Pix</span>
+                                    <div class="payment-date">
+                                        <span class="calendar-icon"></span>
+                                        <span>08 Nov, 2024</span>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="payment-value">
+                                <span class="payment-frequency">Mensal</span>
+                                <span class="payment-amount">R$99,00</span>
+                            </div>
+                            <div class="action-menu">
+                                <span class="dot"></span>
+                                <span class="dot"></span>
+                                <span class="dot"></span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="payment-alert">
+                        <span>Próximo pagamento em 2 dias</span>
+                        <button class="pay-bill-btn">Pagar Fatura</button>
+                    </div>
+                </div>
+            </div>
+
+            <div class="payment-section">
+                <h2 class="section-title section-title-gray">Esta semana</h2>
+                <!-- Repeated payment items with different dates -->
+                <div class="payment-item">
+                    <!-- Same structure as above, only date changes to 13 Nov -->
+                </div>
+                <div class="payment-item">
+                    <!-- Same structure as above, only date changes to 15 Nov -->
+                </div>
+            </div>
+        </div>
+
+        <div class="calendar">
+            <div class="calendar-header">
+                <div class="current-date">
+                    <span class="month">Novembro</span>
+                    <span class="year">2024</span>
+                </div>
+                <div class="calendar-nav">
+                    <button class="nav-btn prev"></button>
+                    <button class="nav-btn next"></button>
+                </div>
+            </div>
+            <div class="calendar-body">
+                <!-- Calendar content here -->
+            </div>
+        </div>
+    </div>
+</div>
 {% endblock %}

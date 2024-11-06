@@ -9,69 +9,84 @@
 {% block title %}Transações{% endblock %}
 
 {% block content %}
-<div class="TransaEs">
-  <div class="Conteudo">
-    <div class="Frame212">
-      <div class="NomePagina">Transações</div>
-      <div class="BotaoAddTransacao">
-        <div class="Vector"></div>
-        <div class="AdicionarTransaO">Adicionar Transação</div>
+<div class="conteudo">
+  <div class="frame-212">
+      <div class="nome-pagina">Transações</div>
+      <div class="botao-add-transacao">
+          <div class="vector"></div>
+          <div class="adicionar-transacao">Adicionar Transação</div>
       </div>
-    </div>
-    <div class="Frame211">
-      <div class="Frame210">
-        <div class="Frame209">
-          <div class="DropdownButtonUltimos7dias" onclick="toggleDropdown()">
-            <div class="Ltimos7Dias">Últimos 7 Dias</div>
-            <div>
-              <img src="{% static 'icons\seta-transacoes.svg' %}" alt="Ícone de seta">
-            </div>
+  </div>
+  
+  <div class="frame-211">
+      <div class="frame-210">
+          <div class="frame-209">
+              <div class="dropdown-button-ultimos-7dias">
+                  <div class="ultimos-7-dias">Últimos 7 Dias</div>
+                  <div class="vector-1"></div>
+              </div>
+              <div class="date-picker-button-inicial">
+                  <div class="data-inicial">Data Inicial</div>
+                  <div class="vector"></div>
+              </div>
+              <div class="date-picker-button-final">
+                  <div class="data-final">Data Final</div>
+                  <div class="vector"></div>
+              </div>
           </div>
-          <div id="dropdownContent" style="display: none;">
-            <ul>
-              <li>Últimos 7 Dias</li>
-              <li>Últimos 15 Dias</li>
-              <li>Últimos 30 Dias</li>
-            </ul>
+          <div class="frame-208">
+              <div class="botao-filtros">
+                  <div class="filtros">Filtros</div>
+                  <div class="vector"></div>
+              </div>
+              <div class="barra-pesquisa">
+                  <div class="pesquisar">Pesquisar</div>
+                  <div class="vector"></div>
+              </div>
           </div>
-          
-          <div class="DatePickerButtonInicial">
-            <div class="DataInicial">Data Inicial</div>
-            <div class="Vector"></div>
-          </div>
-          <div class="DatePickerButtonFinal">
-            <div class="DataFinal">Data Final</div>
-            <div class="Vector"></div>
-          </div>
-        </div>
-        <div class="Frame208">
-          <div class="BotaoFiltros">
-            <div class="Filtros">Filtros</div>
-            <div class="Vector"></div>
-          </div>
-          <div class="BarraPesquisa">
-            <div class="Pesquisar">Pesquisar</div>
-            <div class="Vector"></div>
-          </div>
-        </div>
       </div>
-      <div class="TabelaTransacoes">
-        <div class="TabelaCategorias">
-          <div class="Item">Item</div>
-          <div class="Data">Data</div>
-          <div class="Valor">Valor</div>
-          <div class="Tipo">Tipo</div>
-          <div class="BancoConta">Banco/Conta</div>
-          <div class="Categoria">Categoria</div>
-        </div>
-        <div class="TabelaItens">
-          <!-- Itens da tabela -->
-          <!-- Adicione os itens da tabela como desejado -->
-        </div>
+      
+      <div class="tabela-transacoes">
+          <table>
+              <thead>
+                  <tr>
+                      <th>Item</th>
+                      <th>Data</th>
+                      <th>Valor</th>
+                      <th>Tipo</th>
+                      <th>Banco/Conta</th>
+                      <th>Categoria</th>
+                      <th></th>
+                  </tr>
+              </thead>
+              <tbody>
+                  <tr>
+                      <td>
+                          <div class="item-container">
+                              <div class="item-icon">
+                                  <img src="https://via.placeholder.com/20x20" alt="Apple Store icon">
+                              </div>
+                              <div class="item-name">Apple Store</div>
+                          </div>
+                      </td>
+                      <td>10 out 2024</td>
+                      <td>R$ 7.199,00</td>
+                      <td><span class="tipo despesa">Despesa</span></td>
+                      <td><span class="banco nubank">Nubank</span></td>
+                      <td><span class="categoria compras">
+                          <span class="vector"></span>
+                          Compras
+                      </span></td>
+                      <td>
+                          <div class="actions">
+                              <div class="dots"></div>
+                          </div>
+                      </td>
+                  </tr>
+                  <!-- Repetir a estrutura para as outras linhas -->
+              </tbody>
+          </table>
       </div>
-    </div>
   </div>
 </div>
-  
-<script src="js/script.js"></script>
 {% endblock %}

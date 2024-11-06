@@ -1,8 +1,84 @@
 {% extends 'financas/base.html' %}
 
-{% block title %}Metas - Monede{% endblock %}
+{% load static %}
+
+{% block extra_css %}
+  <link rel="stylesheet" href="{% static 'financas/css/metas.css' %}">
+{% endblock %}
+
+{% block title %}Metas{% endblock %}
 
 {% block content %}
-    <h1>Metas Financeiras</h1>
-    <p>Estabeleça e acompanhe suas metas financeiras aqui.</p>
+<div class="goals-dashboard">
+    <div class="goals-container">
+      <div class="header">
+        <div class="page-title">Minhas Metas</div>
+        <div class="add-goal-button">
+          <div class="add-icon"></div>
+          <div class="button-text">Adicionar Nova Meta</div>
+        </div>
+      </div>
+      <div class="goals-grid">
+        <!-- First Goal Card -->
+        <div class="goal-card">
+          <div class="card-image">
+            <div class="image-placeholder"></div>
+            <div class="image-overlay overlay-purple"></div>
+          </div>
+          <div class="card-content">
+            <div class="goal-details">
+              <div class="category-tag purple">
+                <div class="category-icon purple"></div>
+                <div class="category-text purple">Viagem</div>
+              </div>
+              <div class="goal-header">
+                <div class="goal-title">Viagem Islândia</div>
+                <div class="menu-dots">
+                  <div class="dot"></div>
+                  <div class="dot"></div>
+                  <div class="dot"></div>
+                </div>
+              </div>
+              <div class="goal-values">
+                <div class="current-value">R$ 0,00</div>
+                <div class="remaining-value">R$ 0,00</div>
+              </div>
+            </div>
+            <div class="progress-bar">
+              <div class="progress-fill"></div>
+            </div>
+          </div>
+        </div>
+        
+        <!-- Second Goal Card -->
+        <div class="goal-card">
+          <div class="card-image">
+            <div class="image-placeholder"></div>
+            <div class="image-overlay overlay-yellow"></div>
+          </div>
+          <div class="card-content">
+            <div class="goal-details">
+              <div class="category-tag yellow">
+                <div class="category-icon yellow"></div>
+                <div class="category-text yellow">Transporte</div>
+              </div>
+              <div class="goal-header">
+                <div class="goal-title">Mercedes AMG G63</div>
+                <div class="menu-dots">
+                  <div class="dot"></div>
+                  <div class="dot"></div>
+                  <div class="dot"></div>
+                </div>
+              </div>
+              <div class="goal-values">
+                <div class="current-value">R$ 0,00</div>
+                <div class="remaining-value">R$ 0,00</div>
+              </div>
+            </div>
+            <div class="progress-bar"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
 {% endblock %}

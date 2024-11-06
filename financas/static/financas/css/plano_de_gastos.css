@@ -1,104 +1,223 @@
+/* Main styles */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  font-family: "Arial Rounded MT Bold", Arial, sans-serif;
+}
+
+body {
+  background: #F8F8F8;
+}
+
 .plano-gastos {
-    width: 876px;
-    padding: 70px 0;
-    display: flex;
-    flex-direction: column;
-    gap: 35px;
-  }
-  
-  .titulo-gastos h1 {
-    font-size: 25px;
-    color: #212121;
-    font-family: 'Arial Rounded MT Bold';
-  }
-  
-  .titulo-gastos p {
-    font-size: 14px;
-    color: #BEBEBE;
-    font-family: 'Arial Rounded MT Bold';
-  }
-  
-  .conteudo-principal {
-    display: flex;
-    justify-content: space-between;
-    gap: 72px;
-    padding: 20px 30px;
-    background: white;
-    border-radius: 20px;
-  }
-  
-  .grafico-pizza {
-    width: 240px;
-    height: 240px;
-    position: relative;
-  }
-  
-  .fatia {
-    width: 100%;
-    height: 100%;
-    border-radius: 50%;
-    position: absolute;
-  }
-  
-  .amarelo { background: #FECC01; }
-  .laranja { background: #D1560A; }
-  .roxo { background: #820AD1; }
-  .azul { background: #34669A; }
-  
-  .detalhes-gastos {
-    width: 500px;
-  }
-  
-  .header-detalhes {
-    display: flex;
-    justify-content: space-between;
-    font-size: 12px;
-    color: #434343;
-    font-family: 'Arial Rounded MT Bold';
-  }
-  
-  .categoria {
-    display: flex;
-    justify-content: space-between;
-    margin: 5px 0;
-  }
-  
-  .categoria-descricao {
-    display: flex;
-    align-items: center;
-    gap: 8px;
-  }
-  
-  .cor-categoria {
-    width: 30px;
-    height: 30px;
-    border-radius: 50%;
-  }
-  
-  .azul { background: #34669A; }
-  .amarelo { background: #FECC01; }
-  .roxo { background: #820AD1; }
-  .laranja { background: #D1560A; }
-  
-  .orcamento {
-    display: flex;
-    justify-content: space-around;
-    gap: 30px;
-  }
-  
-  .orcamento div {
-    text-align: center;
-  }
-  
-  .orcamento h2 {
-    font-size: 20px;
-    color: #212121;
-    font-family: 'Arial Rounded MT Bold';
-  }
-  
-  .orcamento p {
-    font-size: 14px;
-    color: #BEBEBE;
-    font-family: 'Arial Rounded MT Bold';
-  }
-  
+  width: 876px;
+  min-height: 832px;
+  margin: 0 auto;
+}
+
+.container {
+  padding: 70px 0;
+  display: flex;
+  flex-direction: column;
+  gap: 35px;
+}
+
+/* Header section */
+.nome-pagina {
+  height: 47px;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.nome-pagina h1 {
+  color: #212121;
+  font-size: 25px;
+  font-weight: 400;
+}
+
+.nome-pagina .data {
+  color: #BEBEBE;
+  font-size: 14px;
+}
+
+/* Main graph container */
+.container-grafico-geral {
+  padding: 20px 30px;
+  background: white;
+  border-radius: 20px;
+  display: flex;
+  align-items: center;
+  gap: 72px;
+}
+
+/* Doughnut chart */
+.doughnut {
+  width: 240px;
+  height: 240px;
+  position: relative;
+}
+
+.slice {
+  width: 240px;
+  height: 240px;
+  position: absolute;
+  border-radius: 50%;
+}
+
+.slice-yellow { background: #FECC01; }
+.slice-orange { background: #D1560A; }
+.slice-purple { background: #820AD1; }
+.slice-blue { background: #34669A; }
+
+/* Expenses info */
+.gastos-info {
+  width: 500px;
+  display: flex;
+  flex-direction: column;
+}
+
+.gastos-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  height: 25px;
+  color: #434343;
+  font-size: 12px;
+}
+
+.gastos-list {
+  margin: 20px 0;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.gasto-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.categoria {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.dot {
+  width: 30px;
+  height: 30px;
+  border-radius: 50%;
+}
+
+/* Colors */
+.blue { background: #34669A; }
+.yellow { background: #FECC01; }
+.purple { background: #820AD1; }
+.orange { background: #D1560A; }
+.green { color: #5D9953; }
+.red { color: #AC2323; }
+
+/* Summary section */
+.resumo-gastos {
+  display: flex;
+  gap: 30px;
+  margin-top: 20px;
+}
+
+.resumo-item {
+  padding: 5px 10px;
+}
+
+.resumo-item .valor {
+  font-size: 20px;
+  color: #212121;
+}
+
+.resumo-item .label {
+  color: #BEBEBE;
+  font-size: 14px;
+  text-transform: capitalize;
+}
+
+/* Planned expenses section */
+.container-despesas-planejadas {
+  padding: 20px 5px;
+  background: white;
+  border-radius: 20px;
+}
+
+.titulo {
+  padding: 0 20px;
+  color: #929292;
+  font-size: 15px;
+}
+
+.despesas-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 5px;
+  padding: 10px 5px;
+}
+
+.despesa-item {
+  width: 282px;
+  padding: 10px;
+  display: flex;
+  align-items: center;
+  gap: 7px;
+}
+
+.icon {
+  width: 45px;
+  height: 45px;
+  border-radius: 10px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.vector {
+  width: 20px;
+  height: 19px;
+  border: 2.5px solid;
+}
+
+/* Background colors for icons */
+.yellow-bg { background: #FFF7B8; }
+.purple-bg { background: #C5B8FF; }
+.orange-bg { background: #FFBAB8; }
+.green-bg { background: #DDFFB8; }
+.blue-bg { background: #B8DBFF; }
+
+/* Border colors for vectors */
+.yellow-border { border-color: #FECC01; }
+.purple-border { border-color: #820AD1; }
+.orange-border { border-color: #D1560A; }
+.green-border { border-color: #5D9124; }
+.blue-border { border-color: #34669A; }
+
+/* Progress bars */
+.progresso {
+  width: 210px;
+}
+
+.valor-faltante {
+  text-align: right;
+  color: #BEBEBE;
+  font-size: 9px;
+}
+
+.barra-progresso {
+  height: 10px;
+  border-radius: 20px;
+  margin-top: 5px;
+}
+
+.progresso-atual {
+  width: 54%;
+  height: 100%;
+  border-radius: 20px 20px 0 0;
+}

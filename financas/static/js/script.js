@@ -14,6 +14,7 @@ document.addEventListener("DOMContentLoaded", function() {
     icon.classList.toggle("rotated");
   }
 
+
   window.toggleDropdown = toggleDropdown;
   window.toggleExpand = toggleExpand;
 });
