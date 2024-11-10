@@ -87,3 +87,43 @@ document.addEventListener("DOMContentLoaded", function() {
     dateInputFinal.addEventListener("change", updateDateFinalText);
   }
 });
+
+
+document.addEventListener('DOMContentLoaded', function() {
+  // Variáveis globais
+  const perfilMenu = document.getElementById('perfilMenu');
+  const contasCartoesConteudo = document.getElementById('conteudoContasCartoes');
+  const iconeExpandir = document.getElementById('iconeExpandir');
+  
+  // Toggle do menu de perfil
+  window.togglePerfilMenu = function() {
+      perfilMenu.classList.toggle('ativo');
+      
+      // Fecha o menu quando clicar fora
+      document.addEventListener('click', function(e) {
+          if (!e.target.closest('.perfil-container')) {
+              perfilMenu.classList.remove('ativo');
+          }
+      });
+  };
+  
+  // Toggle da seção de contas e cartões
+  window.toggleContasCartoes = function() {
+      contasCartoesConteudo.classList.toggle('ativo');
+      iconeExpandir.textContent = contasCartoesConteudo.classList.contains('ativo') ? '▼' : '▲';
+  };
+  
+  // Função para mostrar balanço
+  window.mostrarBalanco = function() {
+      // Implementar lógica para mostrar o balanço detalhado
+      console.log('Mostrar balanço');
+  };
+  
+  // Formatação de valores monetários
+  function formatarMoeda(valor) {
+      return valor.toLocaleString('pt-BR', {
+          style: 'currency',
+          currency: 'BRL'
+      });
+  }
+});

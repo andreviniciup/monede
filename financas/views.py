@@ -169,9 +169,20 @@ def plano_de_gastos_view(request):
     return render(request, 'financas/plano_de_gastos.html', context)
 
 
-def investimento_view(request):
-    return render(request, 'financas/investimento.html')
+def editar_perfil(request):
+    return render(request, 'financas/editar_perfil.html')
 
-def configuracoes_view(request):
-    return render(request, 'financas/configuracoes.html')
+def minhas_contas(request):
+    return render(request, 'financas/minhas_contas.html')
 
+def meus_cartoes(request):
+    return render(request, 'financas/meus_cartoes.html')
+
+def meus_limites(request):
+    return render(request, 'financas/meus_limites.html')
+
+def categorias(request):
+    return render(request, 'financas/categorias.html')
+
+def subcategorias(request):
+    return render(request, 'financas/subcategorias.html')

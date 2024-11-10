@@ -1,0 +1,22 @@
+{% load static %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'financas/css/inicio.css' %}">
+<script src="{% static 'js/script.js' %}"></script>
+{% endblock %}
+
+<!-- templates/components/perfil_menu.html -->
+<div class="perfil-container">
+    <button class="perfil-botao" onclick="togglePerfilMenu()">
+        <span>{{ usuario.nome }}</span>
+        <img src="{{ usuario.foto_url }}" alt="Foto de perfil" class="foto-perfil">
+    </button>
+    <div class="perfil-menu" id="perfilMenu">
+        <a href="{% url 'editar_perfil' %}">Editar Perfil</a>
+        <a href="{% url 'meus_cartoes' %}">Meus Cartões</a>
+        <a href="{% url 'minhas_contas' %}">Minhas Contas</a>
+        <a href="{% url 'categorias' %}">Categorias</a>
+        <a href="{% url 'subcategorias' %}">Subcategorias</a>
+        <a href="{% url 'meus_limites' %}">Meus Limites</a>
+    </div>
+</div>

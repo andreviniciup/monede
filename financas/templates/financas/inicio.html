@@ -16,11 +16,11 @@
       <div class="conteudo-extrato">
           <div class="receita">
               <div>Receita</div>
-              <div class="receita-usuario">R$ 3234,78</div>
+              <div class="receita-usuario">R$ {{ receita|floatformat:2 }}</div>
           </div>
           <div class="despesas">
               <div>Despesas</div>
-              <div class="despesa-usuario">R$ 2315,44</div>
+              <div class="despesa-usuario"> R${{ despesas|floatformat:2 }}</div>
           </div>
           <div class="botao-ver-balanco">
               <div class="vector"></div>
