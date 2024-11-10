@@ -4,86 +4,104 @@
 
 {% block extra_css %}
   <link rel="stylesheet" href="{% static 'financas/css/pagamentos.css' %}">
+  <script src="{% static 'js/pagamentos.js' %}"></script>
 {% endblock %}
 
 {% block title %}Pagamentos{% endblock %}
 
 {% block content %}
-<div class="payments">
-    <div class="payments-container">
-        <div class="payments-content">
-            <div class="header">
-                <h1 class="page-title">Pagamentos</h1>
-                <button class="add-payment-btn">
-                    <span class="add-icon"></span>
-                    <span>Adicionar Pagamento</span>
-                </button>
-            </div>
+<div class="container">
+    <header class="header">
+        <h1 class="titulo-pagina">Pagamentos</h1>
+        <button class="btn-adicionar" onclick="abrirModalNovoPagamento()">
+            <i class="fas fa-plus"></i>
+            Adicionar Pagamento
+        </button>
+    </header>
 
-            <div class="payment-section">
-                <h2 class="section-title">Hoje</h2>
-                <div class="payment-group">
-                    <div class="payment-item">
-                        <div class="payment-content">
-                            <div class="date-box">
-                                <span class="month">Out</span>
-                                <span class="day">10</span>
-                            </div>
-                            <div class="payment-info">
-                                <div class="title">Claro | Plano</div>
-                                <div class="payment-details">
-                                    <span class="payment-type">Pix</span>
-                                    <div class="payment-date">
-                                        <span class="calendar-icon"></span>
-                                        <span>08 Nov, 2024</span>
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="payment-value">
-                                <span class="payment-frequency">Mensal</span>
-                                <span class="payment-amount">R$99,00</span>
-                            </div>
-                            <div class="action-menu">
-                                <span class="dot"></span>
-                                <span class="dot"></span>
-                                <span class="dot"></span>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="payment-alert">
-                        <span>Próximo pagamento em 2 dias</span>
-                        <button class="pay-bill-btn">Pagar Fatura</button>
+    <main class="conteudo-principal">
+        {% if pagamentos_atrasados %}
+        <div class="alerta-atraso">
+            <p>Você tem {{ pagamentos_atrasados.count }} pagamento{{ pagamentos_atrasados.count|pluralize }} atrasado{{ pagamentos_atrasados.count|pluralize }}</p>
+        </div>
+        {% endif %}
+
+        <section class="secao-pagamentos">
+            <h2 class="titulo-secao">Hoje</h2>
+            {% for pagamento in pagamentos_hoje %}
+            <div class="card-pagamento">
+                <div class="data-box">
+                    <div class="data-mes">{{ pagamento.data_vencimento|date:"M" }}</div>
+                    <div class="data-dia">{{ pagamento.data_vencimento|date:"d" }}</div>
+                </div>
+                <div class="info-pagamento">
+                    <div class="titulo-pagamento">{{ pagamento.titulo }}</div>
+                    <div class="detalhes-pagamento">
+                        <span>{{ pagamento.get_status_display }}</span>
+                        <span>{{ pagamento.data_vencimento|date:"d M, Y" }}</span>
                     </div>
                 </div>
+                <div class="valor-pagamento">
+                    <div class="frequencia">{{ pagamento.get_frequencia_display }}</div>
+                    <div class="valor">R$ {{ pagamento.valor|floatformat:2 }}</div>
+                </div>
+            </div>
+            {% empty %}
+            <p class="sem-pagamentos">Nenhum pagamento para hoje</p>
+            {% endfor %}
+        </section>
+
+        <section class="calendario">
+            <div class="header-calendario">
+                <div class="mes-atual">
+                    <span>{{ hoje|date:"F" }}</span>
+                    <span>{{ hoje|date:"Y" }}</span>
+                </div>
             </div>
 
-            <div class="payment-section">
-                <h2 class="section-title section-title-gray">Esta semana</h2>
-                <!-- Repeated payment items with different dates -->
-                <div class="payment-item">
-                    <!-- Same structure as above, only date changes to 13 Nov -->
+            <div class="info-calendario">
+                <div class="evento-calendario">
+                    <i class="fas fa-file-invoice"></i>
+                    <span>{{ total_pagamentos_mes }} pagamentos este mês</span>
                 </div>
-                <div class="payment-item">
-                    <!-- Same structure as above, only date changes to 15 Nov -->
+                <div class="evento-calendario">
+                    <i class="fas fa-money-bill-wave"></i>
+                    <span>Total: R$ {{ valor_total_mes|floatformat:2 }}</span>
                 </div>
             </div>
-        </div>
+        </section>
+    </main>
+</div>
 
-        <div class="calendar">
-            <div class="calendar-header">
-                <div class="current-date">
-                    <span class="month">Novembro</span>
-                    <span class="year">2024</span>
-                </div>
-                <div class="calendar-nav">
-                    <button class="nav-btn prev"></button>
-                    <button class="nav-btn next"></button>
-                </div>
+<!-- Modal Novo Pagamento -->
+<div id="modalNovoPagamento" class="modal">
+    <div class="modal-conteudo">
+        <span class="fechar-modal" onclick="fecharModalNovoPagamento()">&times;</span>
+        <h2>Adicionar Novo Pagamento</h2>
+        <form id="formNovoPagamento" onsubmit="salvarNovoPagamento(event)">
+            {% csrf_token %}
+            <div class="form-grupo">
+                <label for="titulo">Título</label>
+                <input type="text" id="titulo" name="titulo" required>
             </div>
-            <div class="calendar-body">
-                <!-- Calendar content here -->
+            <div class="form-grupo">
+                <label for="valor">Valor</label>
+                <input type="number" id="valor" name="valor" step="0.01" required>
             </div>
-        </div>
+            <div class="form-grupo">
+                <label for="data_vencimento">Data de Vencimento</label>
+                <input type="date" id="data_vencimento" name="data_vencimento" required>
+            </div>
+            <div class="form-grupo">
+                <label for="frequencia">Frequência</label>
+                <select id="frequencia" name="frequencia" required>
+                    <option value="unica">Única</option>
+                    <option value="mensal">Mensal</option>
+                    <option value="anual">Anual</option>
+                </select>
+            </div>
+            <button type="submit" class="btn-adicionar">Salvar</button>
+        </form>
     </div>
 </div>
 {% endblock %}

@@ -14,8 +14,9 @@
 .nome-pagina {
   color: black;
   font-size: 30px;
-  font-family: 'Arial Rounded MT Bold';
+  font-family: "Nunito", Arial, sans-serif;
 }
+
 
 .botao-add-transacao {
   padding: 7px 10px;
@@ -24,21 +25,26 @@
   display: flex;
   align-items: center;
   gap: 5px;
+  border: none; 
+  cursor: pointer; 
 }
 
+
 .botao-add-transacao .vector {
-  width: 8px;
-  height: 8px;
-  border: 2px #D0EAEE solid;
+  width: 12px; 
+  height: 12px;
+  border: none;
 }
+
 
 .adicionar-transacao {
   color: #D0EAEE;
   font-size: 12px;
-  font-family: 'Arial Rounded MT Bold';
+  font-family: "Nunito", Arial, sans-serif;
 }
 
-/* Filtros e Pesquisa */
+
+
 .frame-210 {
   display: flex;
   justify-content: space-between;
@@ -52,8 +58,8 @@
   gap: 10px;
 }
 
-.dropdown-button-ultimos-7dias,
-.date-picker-button-inicial,
+
+
 .date-picker-button-final,
 .botao-filtros {
   padding: 8px 15px;
@@ -63,23 +69,128 @@
   display: flex;
   align-items: center;
   gap: 5px;
-  font-family: 'Arial Rounded MT Bold';
+  font-family: "Nunito", Arial, sans-serif;
   font-size: 12px;
   color: #BEBEBE;
 }
 
-.barra-pesquisa {
-  width: 265px;
-  padding: 6px 9px;
+
+/* Estilo do botão */
+.dropdown-button-ultimos-7dias {
+  padding: 8px 15px;
   background: #F2F2F2;
   border-radius: 10px;
   border: 1px #BEBEBE solid;
   display: flex;
   align-items: center;
-  justify-content: space-between;
+  gap: 5px;
+  font-family: "Nunito", Arial, sans-serif;
+  font-size: 12px;
+  color: #BEBEBE;
+  cursor: pointer;
 }
 
-/* Tabela */
+/* Estilo do conteúdo do dropdown */
+.dropdown-content {
+  display: none; /* Esconde o dropdown por padrão */
+  position: absolute;
+  background-color: #FFFFFF;
+  min-width: 160px;
+  box-shadow: 0px 8px 16px rgba(0, 0, 0, 0.1);
+  border-radius: 10px;
+  border: 1px solid #E0E0E0;
+  z-index: 1;
+}
+
+.dropdown-content a {
+  color: #333333;
+  padding: 10px 15px;
+  text-decoration: none;
+  font-family: "Nunito", Arial, sans-serif;
+  font-size: 12px;
+  display: block;
+  border-bottom: 1px solid #E0E0E0;
+}
+
+.dropdown-content a:hover {
+  background-color: #F5F5F5;
+}
+
+.dropdown-content a:last-child {
+  border-bottom: none; /* Remove a borda do último item */
+}
+
+
+.date-picker-button-inicial {
+  padding: 8px 15px;
+  background: #F2F2F2;
+  border-radius: 10px;
+  border: 1px solid #BEBEBE;
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  font-family: "Nunito", Arial, sans-serif;
+  font-size: 12px;
+  color: #BEBEBE;
+  cursor: pointer;
+}
+
+
+.date-input {
+  padding: 8px 15px;
+  background: #F2F2F2;
+  border-radius: 10px;
+  border: 1px solid #BEBEBE;
+  font-family: "Nunito", Arial, sans-serif;
+  font-size: 12px;
+  color: #333;
+  display: none; 
+}
+
+.date-input:focus {
+  border-color: #007BFF; 
+  outline: none;
+  box-shadow: 0 0 5px rgba(0, 123, 255, 0.5);
+}
+
+.vector {
+  width: 16px;
+  height: 16px;
+}
+
+.barra-pesquisa {
+  width: 265px;
+  background: #F2F2F2;
+  border-radius: 10px;
+  border: 1px solid #BEBEBE;
+  display: flex;
+  align-items: center;
+  padding: 0 10px;
+  gap: 8px;
+}
+
+.input-pesquisa {
+  width: 100%;
+  padding: 8px 0;
+  border: none;
+  background: transparent;
+  font-family: "Nunito", Arial, sans-serif;
+  font-size: 14px;
+  color: #212121; 
+  outline: none;
+}
+
+.input-pesquisa::placeholder {
+  color: #BEBEBE; 
+}
+
+
+.vector img {
+  width: 18px;
+  height: 18px;
+}
+
+
 .tabela-transacoes {
   width: 100%;
 }
@@ -93,7 +204,7 @@ table {
 th {
   color: #212121;
   font-size: 12px;
-  font-family: 'Arial Rounded MT Bold';
+  font-family: "Nunito", Arial, sans-serif;
   text-align: left;
   padding: 0 10px;
 }
@@ -117,14 +228,14 @@ th {
 
 .item-name {
   font-size: 14px;
-  font-family: 'Arial Rounded MT Bold';
+  font-family: "Nunito", Arial, sans-serif;
   color: black;
 }
 
 /* Tipos */
 .tipo {
   font-size: 14px;
-  font-family: 'Arial Rounded MT Bold';
+  font-family: "Nunito", Arial, sans-serif;
 }
 
 .tipo.despesa {
@@ -138,7 +249,7 @@ th {
 /* Bancos */
 .banco {
   font-size: 14px;
-  font-family: 'Arial Rounded MT Bold';
+  font-family: "Nunito", Arial, sans-serif;
 }
 
 .banco.nubank {
@@ -157,7 +268,7 @@ th {
   align-items: center;
   gap: 4px;
   font-size: 10px;
-  font-family: 'Arial Rounded MT Bold';
+  font-family: "Nunito", Arial, sans-serif;
 }
 
 .categoria.compras {

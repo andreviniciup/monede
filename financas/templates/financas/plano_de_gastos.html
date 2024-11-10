@@ -3,162 +3,97 @@
 {% load static %}
 
 {% block extra_css %}
-  <link rel="stylesheet" href="{% static 'financas/css/plano_de_gastos.css' %}">
+<link rel="stylesheet" href="{% static 'financas/css/plano_de_gastos.css' %}">
+{% endblock %}
+
+{% block extra_js %}
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script src="{% static 'static/js/plano_de_gastos.js' %}"></script>
+<script>
+    // Dados do backend para os gráficos
+    window.categoriaData = {{ categoria_data|safe }};
+    window.despesasData = {{ despesas_data|safe }};
+
+    // Inicializa a classe PlanoGastos
+    const planoGastos = new PlanoGastos();
+    planoGastos.initialize();
+
+    // Limpa os gráficos quando sair da página
+    window.addEventListener('unload', () => {
+        planoGastos.destroy();
+    });
+</script>
 {% endblock %}
 
 {% block title %}Plano de gastos{% endblock %}
 
 {% block content %}
 <div class="plano-gastos">
-  <div class="container">
-      <div class="nome-pagina">
-          <h1>Plano de gastos</h1>
-          <div class="data">Novembro 2024</div>
-      </div>
+    <div class="container">
+        <div class="nome-pagina">
+            <h1>Plano de gastos</h1>
+            <div class="data">{{ mes_atual }}</div>
+        </div>
 
-      <div class="container-grafico-geral">
-          <div class="doughnut">
-              <div class="slice slice-yellow"></div>
-              <div class="slice slice-orange"></div>
-              <div class="slice slice-purple"></div>
-              <div class="slice slice-blue"></div>
-          </div>
+        <div class="container-grafico-geral">
+            <div class="chart-container">
+                <canvas id="doughnutChart"></canvas>
+            </div>
 
-          <div class="gastos-info">
-              <div class="gastos-header">
-                  <div class="categorias">categorias</div>
-                  <div class="gastos-total">gastos total</div>
-              </div>
+            <div class="gastos-info">
+                <div class="gastos-header">
+                    <div class="categorias">categorias</div>
+                    <div class="gastos-total">gastos total</div>
+                </div>
 
-              <div class="gastos-list">
-                  <div class="gasto-item">
-                      <div class="categoria">
-                          <span class="dot blue"></span>
-                          <span>compras</span>
-                      </div>
-                      <div class="valor">R$ 4.504</div>
-                  </div>
-                  <div class="gasto-item">
-                      <div class="categoria">
-                          <span class="dot yellow"></span>
-                          <span>comida</span>
-                      </div>
-                      <div class="valor">R$ 1.7406</div>
-                  </div>
-                  <div class="gasto-item">
-                      <div class="categoria">
-                          <span class="dot purple"></span>
-                          <span>Transporte</span>
-                      </div>
-                      <div class="valor">R$ 509,49</div>
-                  </div>
-                  <div class="gasto-item">
-                      <div class="categoria">
-                          <span class="dot orange"></span>
-                          <span>streaming</span>
-                      </div>
-                      <div class="valor">R$ 398,49</div>
-                  </div>
-              </div>
+                <div class="gastos-list">
+                    {% for categoria in categorias %}
+                    <div class="gasto-item">
+                        <div class="categoria">
+                            <span class="dot" style="background-color: {{ categoria.cor }}"></span>
+                            <span>{{ categoria.nome }}</span>
+                        </div>
+                        <div class="valor">R$ {{ categoria.valor|floatformat:2 }}</div>
+                    </div>
+                    {% endfor %}
+                </div>
 
-              <div class="resumo-gastos">
-                  <div class="resumo-item">
-                      <div class="valor">R$10.435</div>
-                      <div class="label">orçamento total</div>
-                  </div>
-                  <div class="resumo-item">
-                      <div class="valor red">R$7.980</div>
-                      <div class="label">gastos total</div>
-                  </div>
-                  <div class="resumo-item">
-                      <div class="valor green">R$2.455</div>
-                      <div class="label">Saldo Restante</div>
-                  </div>
-              </div>
-          </div>
-      </div>
+                <div class="resumo-gastos">
+                    <div class="resumo-item">
+                        <div class="valor">R$ {{ orcamento_total|floatformat:2 }}</div>
+                        <div class="label">orçamento total</div>
+                    </div>
+                    <div class="resumo-item">
+                        <div class="valor red">R$ {{ gastos_total|floatformat:2 }}</div>
+                        <div class="label">gastos total</div>
+                    </div>
+                    <div class="resumo-item">
+                        <div class="valor green">R$ {{ saldo_restante|floatformat:2 }}</div>
+                        <div class="label">Saldo Restante</div>
+                    </div>
+                </div>
+            </div>
+        </div>
 
-      <div class="container-despesas-planejadas">
-          <div class="titulo">Despesas planejadas</div>
-          <div class="despesas-grid">
-              <div class="despesa-item">
-                  <div class="icon yellow-bg">
-                      <div class="vector yellow-border"></div>
-                  </div>
-                  <div class="info">
-                      <div class="nome">comida</div>
-                      <div class="progresso">
-                          <div class="valor-faltante">R$1.000 faltam</div>
-                          <div class="barra-progresso yellow-bg">
-                              <div class="progresso-atual yellow"></div>
-                          </div>
-                      </div>
-                  </div>
-              </div>
-              <!-- Similar structure for other expense items -->
-              <!-- Transport -->
-              <div class="despesa-item">
-                  <div class="icon purple-bg">
-                      <div class="vector purple-border"></div>
-                  </div>
-                  <div class="info">
-                      <div class="nome">Transporte</div>
-                      <div class="progresso">
-                          <div class="valor-faltante">R$1.000 faltam</div>
-                          <div class="barra-progresso purple-bg">
-                              <div class="progresso-atual purple"></div>
-                          </div>
-                      </div>
-                  </div>
-              </div>
-              <!-- Streaming -->
-              <div class="despesa-item">
-                  <div class="icon orange-bg">
-                      <div class="vector orange-border"></div>
-                  </div>
-                  <div class="info">
-                      <div class="nome">streaming</div>
-                      <div class="progresso">
-                          <div class="valor-faltante">R$1.000 faltam</div>
-                          <div class="barra-progresso orange-bg">
-                              <div class="progresso-atual orange"></div>
-                          </div>
-                      </div>
-                  </div>
-              </div>
-              <!-- Games -->
-              <div class="despesa-item">
-                  <div class="icon green-bg">
-                      <div class="vector green-border"></div>
-                  </div>
-                  <div class="info">
-                      <div class="nome">Jogos</div>
-                      <div class="progresso">
-                          <div class="valor-faltante">R$1.000 faltam</div>
-                          <div class="barra-progresso green-bg">
-                              <div class="progresso-atual green"></div>
-                          </div>
-                      </div>
-                  </div>
-              </div>
-              <!-- Shopping -->
-              <div class="despesa-item">
-                  <div class="icon blue-bg">
-                      <div class="vector blue-border"></div>
-                  </div>
-                  <div class="info">
-                      <div class="nome">Compras</div>
-                      <div class="progresso">
-                          <div class="valor-faltante">R$1.000 faltam</div>
-                          <div class="barra-progresso blue-bg">
-                              <div class="progresso-atual blue"></div>
-                          </div>
-                      </div>
-                  </div>
-              </div>
-          </div>
-      </div>
-  </div>
+        <div class="container-despesas-planejadas">
+            <div class="titulo">Despesas planejadas</div>
+            <div class="despesas-grid">
+                {% for despesa in despesas_planejadas %}
+                <div class="despesa-item">
+                    <div class="icon {{ despesa.cor }}-bg">
+                        <div class="vector {{ despesa.cor }}-border"></div>
+                    </div>
+                    <div class="info">
+                        <div class="nome">{{ despesa.nome }}</div>
+                        <div class="progresso">
+                            <div class="valor-faltante">R$ {{ despesa.valor_faltante|floatformat:2 }} faltam</div>
+                            <canvas id="barChart{{ despesa.id }}" class="progress-bar-chart"></canvas>
+                        </div>
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+    </div>
 </div>
-  
 {% endblock %}

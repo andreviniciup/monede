@@ -1,0 +1,29 @@
+
+.contas-cartoes-components {
+    background: #F0F0F0;
+    border-radius: 20px;
+    padding: 20px 30px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 15px;
+    transition: height 0.3s ease;
+    height: auto; 
+  }
+  
+  .contas-cartoes-components.expanded {
+    height: 350px; 
+  }
+  
+  .component-button-container {
+    cursor: pointer;
+    transition: transform 0.3s ease; 
+  }
+  
+  .component-button-container.rotated {
+    transform: rotate(90deg); 
+  }
+  
+  .text-contas-cartao-components {
+    font-size: 20px
+  }

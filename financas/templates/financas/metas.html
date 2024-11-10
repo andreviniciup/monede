@@ -1,84 +1,96 @@
 {% extends 'financas/base.html' %}
-
 {% load static %}
 
 {% block extra_css %}
-  <link rel="stylesheet" href="{% static 'financas/css/metas.css' %}">
+<link rel="stylesheet" href="{% static 'financas/css/metas.css' %}">
+<script src="{% static 'js/metas.js' %}"></script>
 {% endblock %}
 
-{% block title %}Metas{% endblock %}
-
 {% block content %}
-<div class="goals-dashboard">
-    <div class="goals-container">
-      <div class="header">
-        <div class="page-title">Minhas Metas</div>
-        <div class="add-goal-button">
-          <div class="add-icon"></div>
-          <div class="button-text">Adicionar Nova Meta</div>
-        </div>
-      </div>
-      <div class="goals-grid">
-        <!-- First Goal Card -->
-        <div class="goal-card">
-          <div class="card-image">
-            <div class="image-placeholder"></div>
-            <div class="image-overlay overlay-purple"></div>
-          </div>
-          <div class="card-content">
-            <div class="goal-details">
-              <div class="category-tag purple">
-                <div class="category-icon purple"></div>
-                <div class="category-text purple">Viagem</div>
-              </div>
-              <div class="goal-header">
-                <div class="goal-title">Viagem Islândia</div>
-                <div class="menu-dots">
-                  <div class="dot"></div>
-                  <div class="dot"></div>
-                  <div class="dot"></div>
-                </div>
-              </div>
-              <div class="goal-values">
-                <div class="current-value">R$ 0,00</div>
-                <div class="remaining-value">R$ 0,00</div>
-              </div>
-            </div>
-            <div class="progress-bar">
-              <div class="progress-fill"></div>
-            </div>
-          </div>
+<div class="painel-metas">
+    <div class="container-metas">
+        <div class="cabecalho">
+            <h1 class="titulo-pagina">Minhas Metas</h1>
+            <button class="botao-adicionar-meta" onclick="abrirModalMeta()">
+                <span class="icone-adicionar">+</span>
+                Adicionar Nova Meta
+            </button>
         </div>
         
-        <!-- Second Goal Card -->
-        <div class="goal-card">
-          <div class="card-image">
-            <div class="image-placeholder"></div>
-            <div class="image-overlay overlay-yellow"></div>
-          </div>
-          <div class="card-content">
-            <div class="goal-details">
-              <div class="category-tag yellow">
-                <div class="category-icon yellow"></div>
-                <div class="category-text yellow">Transporte</div>
-              </div>
-              <div class="goal-header">
-                <div class="goal-title">Mercedes AMG G63</div>
-                <div class="menu-dots">
-                  <div class="dot"></div>
-                  <div class="dot"></div>
-                  <div class="dot"></div>
+        <div class="grade-metas">
+            {% for meta in metas %}
+            <div class="cartao-meta">
+                <div class="imagem-cartao" {% if meta.imagem %}style="background-image: url('{{ meta.imagem.url }}')"{% endif %}>
+                    <div class="sobreposicao-imagem sobreposicao-{{ meta.categoria.cor|default:'padrao' }}"></div>
                 </div>
-              </div>
-              <div class="goal-values">
-                <div class="current-value">R$ 0,00</div>
-                <div class="remaining-value">R$ 0,00</div>
-              </div>
+                <div class="conteudo-cartao">
+                    <div class="detalhes-meta">
+                        <span class="tag-categoria {{ meta.categoria.cor|default:'padrao' }}">
+                            {{ meta.categoria.nome|default:"Sem categoria" }}
+                        </span>
+                        <h3 class="titulo-meta">{{ meta.titulo }}</h3>
+                        <div class="valores-meta">
+                            <span class="valor-atual">R$ {{ meta.valor_atual|floatformat:2 }}</span>
+                            <span class="valor-meta">R$ {{ meta.valor_meta|floatformat:2 }}</span>
+                        </div>
+                    </div>
+                    <div class="barra-progresso">
+                        <div class="progresso" style="width: {{ meta.porcentagem_concluida }}%"></div>
+                    </div>
+                </div>
             </div>
-            <div class="progress-bar"></div>
-          </div>
+            {% endfor %}
         </div>
-      </div>
     </div>
-  </div>
+</div>
+
+<!-- Modal Meta -->
+<div id="modalMeta" class="modal">
+    <div class="conteudo-modal">
+        <div class="cabecalho-modal">
+            <h2>Qual é a sua meta?</h2>
+            <button type="button" class="botao-fechar" onclick="fecharModalMeta()">&times;</button>
+        </div>
+        <form method="post" action="{% url 'criar-meta' %}" enctype="multipart/form-data">
+            {% csrf_token %}
+            <div class="upload-imagem">
+                <label for="imagem">
+                    <div class="placeholder-upload">
+                        <i class="icone-imagem"></i>
+                        <span>Adicionar imagem</span>
+                    </div>
+                </label>
+                <input type="file" id="imagem" name="imagem" accept="image/*" hidden>
+            </div>
+            
+            <div class="grupo-form">
+                <label for="titulo">Título*</label>
+                <input type="text" id="titulo" name="titulo" required 
+                       placeholder="ex: comprar um carro" class="input-padrao">
+            </div>
+            
+            <div class="grupo-form">
+                <label for="valor_meta">Valor da meta*</label>
+                <div class="input-valor">
+                    <span class="prefixo-valor">R$</span>
+                    <input type="number" id="valor_meta" name="valor_meta" 
+                           step="0.01" required class="input-padrao"
+                           placeholder="0,00">
+                </div>
+            </div>
+            
+            <div class="grupo-form">
+                <label for="categoria">Categoria (opcional)</label>
+                <select id="categoria" name="categoria" class="input-padrao">
+                    <option value="">selecionar a categoria</option>
+                    {% for categoria in categorias %}
+                    <option value="{{ categoria.id }}">{{ categoria.nome }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+            
+            <button type="submit" class="botao-criar">Cria meta</button>
+        </form>
+    </div>
+</div>
 {% endblock %}

@@ -12,37 +12,54 @@
 <div class="conteudo">
   <div class="frame-212">
       <div class="nome-pagina">Transações</div>
-      <div class="botao-add-transacao">
-          <div class="vector"></div>
-          <div class="adicionar-transacao">Adicionar Transação</div>
-      </div>
+      <button class="botao-add-transacao">
+        <img src="{% static 'icons/addTransação-Vector.svg' %}" alt="Ícone" class="vector">
+        <span class="adicionar-transacao">Adicionar Transação</span>
+      </button>
+      
+    
   </div>
   
   <div class="frame-211">
       <div class="frame-210">
           <div class="frame-209">
-              <div class="dropdown-button-ultimos-7dias">
-                  <div class="ultimos-7-dias">Últimos 7 Dias</div>
-                  <div class="vector-1"></div>
+            <div class="dropdown">
+                <select class="dropdown-button-ultimos-7dias" id="tipo-periodo" required>
+                    <option value="7-dias">Últimos 7 Dias</option>
+                    <option value="15-dias">Últimos 15 Dias</option>
+                    <option value="30-dias">Últimos 30 Dias</option>
+                </select>
+            </div>
+            
+            <div class="date-picker">
+                <label for="data-inicial" class="date-picker-button-inicial" onclick="toggleDatePicker()">
+                  <span id="dataInicialText">Data Inicial</span>
+                  <img src="{% static 'icons/calendario-vector.svg' %}" alt="Ícone" class="vector">
+                </label>
+                <input type="date" id="data-inicial" class="date-input" style="display: none;">
               </div>
-              <div class="date-picker-button-inicial">
-                  <div class="data-inicial">Data Inicial</div>
-                  <div class="vector"></div>
+              
+            <div class="date-picker">
+                <label for="data-final" class="date-picker-button-final" onclick="toggleDatePickerFinal()">
+                  <span id="dataFinalText">Data Final</span>
+                  <img src="{% static 'icons/calendario-vector.svg' %}" alt="Ícone" class="vector">
+                </label>
+                <input type="date" id="data-final" class="date-input" onchange="updateDateFinalText()" style="display: none;">
               </div>
-              <div class="date-picker-button-final">
-                  <div class="data-final">Data Final</div>
-                  <div class="vector"></div>
-              </div>
+              
           </div>
           <div class="frame-208">
-              <div class="botao-filtros">
-                  <div class="filtros">Filtros</div>
-                  <div class="vector"></div>
+            <button class="botao-filtros">
+                <span class="filtros">Filtros</span>
+                <span class="vector"></span>
+            </button>
+            <div class="barra-pesquisa">
+                <input type="text" class="input-pesquisa" placeholder="Pesquisar">
+                <span class="vector-pesquisa">
+                  <img src="{% static 'icons/search-icon.svg' %}" alt="Ícone de pesquisa">
+                </span>
               </div>
-              <div class="barra-pesquisa">
-                  <div class="pesquisar">Pesquisar</div>
-                  <div class="vector"></div>
-              </div>
+              
           </div>
       </div>
       
@@ -64,7 +81,7 @@
                       <td>
                           <div class="item-container">
                               <div class="item-icon">
-                                  <img src="https://via.placeholder.com/20x20" alt="Apple Store icon">
+                                  <img src="{% static 'icons/Apple-Store-icon.svg' %}" alt="Apple Store icon">
                               </div>
                               <div class="item-name">Apple Store</div>
                           </div>

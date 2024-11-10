@@ -63,35 +63,6 @@
   font-size: 35px;
 }
 
-.contas-cartoes-components {
-  background: #F0F0F0;
-  border-radius: 20px;
-  padding: 20px 30px;
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-bottom: 15px;
-  transition: height 0.3s ease; /* Suave transição para altura */
-  height: auto; /* Altura padrão */
-}
-
-.contas-cartoes-components.expanded {
-  height: 350px; /* Altura expandida */
-}
-
-.component-button-container {
-  cursor: pointer;
-  transition: transform 0.3s ease; /* Suave transição para rotação */
-}
-
-.component-button-container.rotated {
-  transform: rotate(90deg); /* Rotaciona a imagem em 90 graus */
-}
-
-.text-contas-cartao-components {
-  font-size: 20px
-}
-
 .tabela-transacoes {
   width: 100%;
 }

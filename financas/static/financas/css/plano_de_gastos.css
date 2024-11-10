@@ -1,15 +1,3 @@
-/* Main styles */
-* {
-  margin: 0;
-  padding: 0;
-  box-sizing: border-box;
-  font-family: "Arial Rounded MT Bold", Arial, sans-serif;
-}
-
-body {
-  background: #F8F8F8;
-}
-
 .plano-gastos {
   width: 876px;
   min-height: 832px;
@@ -52,24 +40,12 @@ body {
   gap: 72px;
 }
 
-/* Doughnut chart */
-.doughnut {
+/* Chart container */
+.chart-container {
   width: 240px;
   height: 240px;
   position: relative;
 }
-
-.slice {
-  width: 240px;
-  height: 240px;
-  position: absolute;
-  border-radius: 50%;
-}
-
-.slice-yellow { background: #FECC01; }
-.slice-orange { background: #D1560A; }
-.slice-purple { background: #820AD1; }
-.slice-blue { background: #34669A; }
 
 /* Expenses info */
 .gastos-info {
@@ -113,10 +89,19 @@ body {
 }
 
 /* Colors */
-.blue { background: #34669A; }
-.yellow { background: #FECC01; }
-.purple { background: #820AD1; }
-.orange { background: #D1560A; }
+.yellow-bg { background: #FFF7B8; }
+.purple-bg { background: #C5B8FF; }
+.orange-bg { background: #FFBAB8; }
+.green-bg { background: #DDFFB8; }
+.blue-bg { background: #B8DBFF; }
+
+/* Border colors */
+.yellow-border { border-color: #FECC01; }
+.purple-border { border-color: #820AD1; }
+.orange-border { border-color: #D1560A; }
+.green-border { border-color: #5D9124; }
+.blue-border { border-color: #34669A; }
+
 .green { color: #5D9953; }
 .red { color: #AC2323; }
 
@@ -185,39 +170,15 @@ body {
   border: 2.5px solid;
 }
 
-/* Background colors for icons */
-.yellow-bg { background: #FFF7B8; }
-.purple-bg { background: #C5B8FF; }
-.orange-bg { background: #FFBAB8; }
-.green-bg { background: #DDFFB8; }
-.blue-bg { background: #B8DBFF; }
-
-/* Border colors for vectors */
-.yellow-border { border-color: #FECC01; }
-.purple-border { border-color: #820AD1; }
-.orange-border { border-color: #D1560A; }
-.green-border { border-color: #5D9124; }
-.blue-border { border-color: #34669A; }
-
-/* Progress bars */
-.progresso {
-  width: 210px;
+/* Progress bar chart container */
+.progress-bar-chart {
+  width: 210px !important;
+  height: 10px !important;
+  margin-top: 5px;
 }
 
 .valor-faltante {
   text-align: right;
   color: #BEBEBE;
   font-size: 9px;
-}
-
-.barra-progresso {
-  height: 10px;
-  border-radius: 20px;
-  margin-top: 5px;
-}
-
-.progresso-atual {
-  width: 54%;
-  height: 100%;
-  border-radius: 20px 20px 0 0;
 }
