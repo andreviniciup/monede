@@ -2,53 +2,59 @@
 {% load static %}
 
 {% block extra_css %}
-  <link rel="stylesheet" href="{% static 'financas/css/inicio.css' %}">
+<link rel="stylesheet" href="{% static 'financas/css/inicio.css' %}">
 {% endblock %}
 
 {% block title %}Início{% endblock %}
 
 {% block content %}
 <div class="conteudo">
-  <div class="conteudo-atualz">
-      <div class="fundo"></div>
-      <div class="ola-usuario">Olá, Vinicius!</div>
-      
-      <div class="conteudo-extrato">
-          <div class="receita">
-              <div>Receita</div>
-              <div class="receita-usuario">R$ {{ receita|floatformat:2 }}</div>
-          </div>
-          <div class="despesas">
-              <div>Despesas</div>
-              <div class="despesa-usuario"> R${{ despesas|floatformat:2 }}</div>
-          </div>
-          <div class="botao-ver-balanco">
-              <div class="vector"></div>
-              <div>Ver Balanço</div>
-          </div>
-      </div>
-  </div>
+    <div class="conteudo-atualz">
+        <div class="fundo">
+            <!-- Incluindo o componente do menu de perfil -->
+            {% include 'components/perfil_menu.html' %}
+        </div>
+
+        <div class="ola-usuario">
+            Olá, Vinicius!
+        </div>
+
+        <div class="conteudo-extrato">
+            <div class="receita">
+                <div>Receita</div>
+                <div class="receita-usuario">R$ {{ receita|floatformat:2 }}</div>
+            </div>
+
+            <div class="despesas">
+                <div>Despesas</div>
+                <div class="despesa-usuario">R${{ despesas|floatformat:2 }}</div>
+            </div>
+
+            <div class="botao-ver-balanco">
+                <div class="vector"></div>
+                <div>Ver Balanço</div>
+            </div>
+        </div>
+    </div>
 
     <div>
         {% include 'components/contasCartoes.html' %}
     </div>
 
-  
-  <div class="tabela-transacoes">
-      <div>Transações</div>
-      {% for transacao in transacoes %}
-      <div class="item-tabela">
-          <div class="frame-icon">
-              <img src="{{ transacao.icon_url }}" alt="{{ transacao.nome }}">
-          </div>
-          <div class="transacao-info">
-              <div class="transacao-nome">{{ transacao.nome }}</div>
-              <div class="transacao-data">{{ transacao.data|date:"d/m/Y H:i" }}</div>
-          </div>
-          <div class="transacao-valor">{{ transacao.valor }}</div>
-      </div>
-      {% endfor %}
-  </div>
+    <div class="tabela-transacoes">
+        <div>Transações</div>
+        {% for transacao in transacoes %}
+        <div class="item-tabela">
+            <div class="frame-icon">
+                <img src="{{ transacao.icon_url }}" alt="{{ transacao.nome }}">
+            </div>
+            <div class="transacao-info">
+                <div class="transacao-nome">{{ transacao.nome }}</div>
+                <div class="transacao-data">{{ transacao.data|date:"d/m/Y H:i" }}</div>
+            </div>
+            <div class="transacao-valor">{{ transacao.valor }}</div>
+        </div>
+        {% endfor %}
+    </div>
 </div>
 {% endblock %}
-

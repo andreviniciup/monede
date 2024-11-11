@@ -1,8 +1,11 @@
 {% extends 'financas/base.html' %}
+{% load static %}
 
-{% block title %}Configurações - Monede{% endblock %}
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'financas/css/meus_cartoes.css' %}">
+{% endblock %}
+
+{% block title %}Meus Cartões{% endblock %}
 
 {% block content %}
-    <h1>Perfil e Configurações</h1>
-    <p>Gerencie suas informações de perfil e preferências aqui.</p>
 {% endblock %}

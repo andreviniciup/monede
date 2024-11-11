@@ -42,6 +42,20 @@ def transacoes_view(request):
 
     return render(request, 'financas/transacoes.html', {'transacoes': transacoes, 'form': form})
 
+def nova_transacao(request):
+    if request.method == 'POST':
+        form = TransacaoForm(request.POST)
+        if form.is_valid():
+            form.save()
+            messages.success(request, 'Transação adicionada com sucesso.')
+            return redirect('transacoes')
+        else:
+            messages.error(request, 'Erro ao adicionar transação. Verifique os dados e tente novamente.')
+    else:
+        form = TransacaoForm()
+
+    return render(request, 'financas/nova_transacao.html', {'form': form})
+
 
 def relatorios_view(request):
     return render(request, 'financas/relatorios.html')
@@ -77,7 +91,7 @@ def criar_meta_view(request):
         except Exception as e:
             messages.error(request, 'Erro ao criar meta. Verifique os dados e tente novamente.')
     
-    return redirect('lista-metas')
+    return redirect('metas')
 
 
 def pagamentos_lista(request):

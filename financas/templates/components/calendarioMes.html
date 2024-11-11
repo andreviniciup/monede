@@ -1,0 +1,26 @@
+{% load static %}
+{% block extra_css %} 
+<link rel="stylesheet" href="{% static 'financas/css/calendarioMes.css' %}"> 
+<script src="{% static 'js/calendarioMes.js' %}"></script>
+{% endblock %}
+
+<div class="calendar-wrapper">
+  <input type="text" class="input-box" readonly>
+  <div class="calendar-element">
+    <div class="calendar-header">
+      <button class="prev-month">
+        <img src="{% static 'icons/seta-transacoes-calendar.svg' %}" alt="Ícone" class="vector_prev">
+      </button>
+      <span class="current-month-year"></span>
+      <button class="next-month">
+        <img src="{% static 'icons/seta-transacoes-calendar.svg' %}" alt="Ícone" class="vector_netx">
+      </button>
+    </div>
+    <div class="calendar-grid">
+      <!-- Calendar days will be dynamically generated here -->
+    </div>
+    <div class="calendar-footer">
+      <button class="apply-btn">Aplicar</button>
+    </div>
+  </div>
+</div>

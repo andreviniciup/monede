@@ -1,0 +1,77 @@
+.calendar-wrapper {
+  position: relative;
+}
+
+.input-box {
+  cursor: pointer;
+  padding: 8px 12px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+}
+
+.calendar-element {
+  position: absolute;
+  top: 100%;
+  left: 0;
+  z-index: 1;
+  background-color: #fff;
+  border: 1px solid #ccc;
+  border-radius: 10px;
+  padding: 16px;
+  display: none;
+}
+
+.calendar-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.calendar-header button {
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  background-color: transparent;
+}
+
+.botões {
+  width: 50px;
+  height: 30px;
+}
+
+.vector_netx {
+  transform: rotate(180deg);
+}
+
+.calendar-grid {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  gap: 8px;
+}
+
+.calendar-grid div {
+  text-align: center;
+  padding: 6px;
+  cursor: pointer;
+  border-radius: 999px;
+}
+
+.calendar-grid div.selected {
+  background-color: #007bff;
+  color: #fff;
+}
+
+.calendar-footer {
+  display: flex;
+  justify-content: flex-end;
+  margin-top: 12px;
+}
+
+.apply-btn {
+  background-color: #007bff;
+  color: #fff;
+  padding: 8px 12px;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+}

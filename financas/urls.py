@@ -5,6 +5,7 @@ from . import views
 urlpatterns = [
     path('', views.inicio_view, name='inicio'),  # Página inicial
     path('transacoes/', views.transacoes_view, name='transacoes'),  # Página de transações
+    path('transacoes/nova-transacao/', views.nova_transacao, name='nova_transacao'),
     path('relatorios/', views.relatorios_view, name='relatorios'),  # Página de relatórios
     path('metas/', views.lista_metas_view, name='metas'),  # Rota para listagem de metas
     path('metas/criar/', views.criar_meta_view, name='criar-meta'), 

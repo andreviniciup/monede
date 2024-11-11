@@ -4,52 +4,14 @@
   padding: 70px 10px;
 }
 
-.frame-212 {
+.frame-212, .frame-210 {
   display: flex;
   justify-content: space-between;
   align-items: center;
   width: 100%;
 }
-
-.nome-pagina {
-  color: black;
-  font-size: 30px;
-  font-family: "Nunito", Arial, sans-serif;
-}
-
-
-.botao-add-transacao {
-  padding: 7px 10px;
-  background: #3F9DAC;
-  border-radius: 20px;
-  display: flex;
-  align-items: center;
-  gap: 5px;
-  border: none; 
-  cursor: pointer; 
-}
-
-
-.botao-add-transacao .vector {
-  width: 12px; 
-  height: 12px;
-  border: none;
-}
-
-
-.adicionar-transacao {
-  color: #D0EAEE;
-  font-size: 12px;
-  font-family: "Nunito", Arial, sans-serif;
-}
-
-
 
 .frame-210 {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  width: 100%;
   margin-bottom: 26px;
 }
 
@@ -58,29 +20,40 @@
   gap: 10px;
 }
 
+.nome-pagina {
+  color: black;
+  font-size: 30px;
+  font-family: "Nunito", Arial, sans-serif;
+}
 
-
-.date-picker-button-final,
-.botao-filtros {
-  padding: 8px 15px;
-  background: #F2F2F2;
-  border-radius: 10px;
-  border: 1px #BEBEBE solid;
+.botao-add-transacao {
+  padding: 7px 10px;
+  background: #3F9DAC;
+  border-radius: 20px;
   display: flex;
   align-items: center;
   gap: 5px;
-  font-family: "Nunito", Arial, sans-serif;
-  font-size: 12px;
-  color: #BEBEBE;
+  border: none;
+  cursor: pointer;
 }
 
+.botao-add-transacao .vector {
+  width: 12px;
+  height: 12px;
+  border: none;
+}
 
-/* Estilo do botão */
-.dropdown-button-ultimos-7dias {
+.adicionar-transacao {
+  color: #D0EAEE;
+  font-size: 12px;
+  font-family: "Nunito", Arial, sans-serif;
+}
+
+.dropdown, .dropdown-button-ultimos-7dias, .date-picker-button-inicial, .date-picker-button-final, .botao-filtros {
   padding: 8px 15px;
   background: #F2F2F2;
   border-radius: 10px;
-  border: 1px #BEBEBE solid;
+  border: 1px solid #BEBEBE;
   display: flex;
   align-items: center;
   gap: 5px;
@@ -90,9 +63,8 @@
   cursor: pointer;
 }
 
-/* Estilo do conteúdo do dropdown */
 .dropdown-content {
-  display: none; /* Esconde o dropdown por padrão */
+  display: none;
   position: absolute;
   background-color: #FFFFFF;
   min-width: 160px;
@@ -117,24 +89,12 @@
 }
 
 .dropdown-content a:last-child {
-  border-bottom: none; /* Remove a borda do último item */
+  border-bottom: none;
 }
 
-
-.date-picker-button-inicial {
-  padding: 8px 15px;
-  background: #F2F2F2;
-  border-radius: 10px;
-  border: 1px solid #BEBEBE;
-  display: flex;
-  align-items: center;
-  gap: 5px;
-  font-family: "Nunito", Arial, sans-serif;
-  font-size: 12px;
+.date-input, .barra-pesquisa .input-pesquisa::placeholder {
   color: #BEBEBE;
-  cursor: pointer;
 }
-
 
 .date-input {
   padding: 8px 15px;
@@ -144,18 +104,13 @@
   font-family: "Nunito", Arial, sans-serif;
   font-size: 12px;
   color: #333;
-  display: none; 
+  display: none;
 }
 
 .date-input:focus {
-  border-color: #007BFF; 
+  border-color: #007BFF;
   outline: none;
   box-shadow: 0 0 5px rgba(0, 123, 255, 0.5);
-}
-
-.vector {
-  width: 16px;
-  height: 16px;
 }
 
 .barra-pesquisa {
@@ -176,27 +131,15 @@
   background: transparent;
   font-family: "Nunito", Arial, sans-serif;
   font-size: 14px;
-  color: #212121; 
+  color: #212121;
   outline: none;
 }
 
-.input-pesquisa::placeholder {
-  color: #BEBEBE; 
-}
-
-
-.vector img {
-  width: 18px;
-  height: 18px;
-}
-
-
-.tabela-transacoes {
+.tabela-transacoes, table {
   width: 100%;
 }
 
 table {
-  width: 100%;
   border-collapse: separate;
   border-spacing: 0 15px;
 }
@@ -232,7 +175,6 @@ th {
   color: black;
 }
 
-/* Tipos */
 .tipo {
   font-size: 14px;
   font-family: "Nunito", Arial, sans-serif;
@@ -246,7 +188,6 @@ th {
   color: #2A741D;
 }
 
-/* Bancos */
 .banco {
   font-size: 14px;
   font-family: "Nunito", Arial, sans-serif;
@@ -260,7 +201,6 @@ th {
   color: #E0C986;
 }
 
-/* Categorias */
 .categoria {
   padding: 3px 10px;
   border-radius: 999px;
@@ -281,7 +221,6 @@ th {
   color: #C89558;
 }
 
-/* Ações */
 .actions {
   display: flex;
   flex-direction: column;
@@ -306,4 +245,67 @@ th {
   background: #999999;
   border-radius: 50%;
   display: block;
+}
+
+.modal {
+  display: none;
+  position: fixed;
+  z-index: 1;
+  left: 0;
+  top: 0;
+  width: 100%;
+  height: 100%;
+  overflow: auto;
+  background-color: rgba(0, 0, 0, 0.4);
+}
+
+.modal-content {
+  background-color: #fefefe;
+  margin: 15% auto;
+  padding: 20px;
+  border: 1px solid #888;
+  width: 30%;
+}
+
+.close-button {
+  color: #aaa;
+  float: right;
+  font-size: 28px;
+  font-weight: bold;
+}
+
+.close-button:hover,
+.close-button:focus {
+  color: black;
+  text-decoration: none;
+  cursor: pointer;
+}
+
+.filtros-selecionados {
+  margin-top: 10px;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+
+.filtro-selecionado {
+  background-color: #3F9DAC;
+  color: #D0EAEE;
+  padding: 5px 10px;
+  border-radius: 20px;
+  font-family: "Nunito", Arial, sans-serif;
+  font-size: 12px;
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  cursor: pointer;
+}
+
+.filtro-selecionado:hover {
+  background-color: #348591;
+}
+
+.filtro-selecionado img {
+  width: 10px;
+  height: 10px;
 }

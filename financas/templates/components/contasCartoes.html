@@ -2,12 +2,23 @@
 
 {% block extra_css %}
 <link rel="stylesheet" href="{% static 'financas/css/contasCartoes.css' %}">
+<script src="{% static 'js/contasCartoes.js' %}"></script>
 {% endblock %}
 
-
-<div class="contas-cartoes-components" id="contasCartoesComponent">
-    <div class="text-contas-cartao-components">Contas e Cartões</div>
-    <div class="component-button-container" onclick="toggleExpand()">
-        <img src="{% static 'icons/contasEcartoes_botam.svg' %}" alt="Botão de Ação" class="button-icon-contas&cartao" id="buttonIcon">
+<div class="contas-cartoes-component">
+    <div class="header-container">
+        <span class="title">Contas e Cartões</span>
+        <button class="expand-button">
+            <img src="{% static 'icons/contasEcartoes_botam.svg' %}" 
+                 alt="Botão de Ação" 
+                 class="button-icon-contas-cartao" 
+                 id="buttonIcon">
+        </button>
+    </div>
+    <div class="content">
+        <!-- Aqui vai o conteúdo que será expandido -->
+        <div class="expanded-content">
+            Conteúdo adicional aqui
+        </div>
     </div>
 </div>

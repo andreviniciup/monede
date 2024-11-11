@@ -1,3 +1,6 @@
+*.svg text eol=lf
+
+
 # Ambiente virtual
 venv/
 ENV/

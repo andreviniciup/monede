@@ -5,105 +5,108 @@
   <link rel="stylesheet" href="{% static 'financas/css/transacoes.css' %}">
 {% endblock %}
 
-
 {% block title %}Transações{% endblock %}
 
 {% block content %}
-<div class="conteudo">
-  <div class="frame-212">
-      <div class="nome-pagina">Transações</div>
-      <button class="botao-add-transacao">
-        <img src="{% static 'icons/addTransação-Vector.svg' %}" alt="Ícone" class="vector">
+  <div class="conteudo">
+    <div class="frame-212">
+      <h1 class="nome-pagina">Transações</h1>
+      <button class="botao-add-transacao" onclick="abrirModalNovaTransacao()">
+        <img src="{% static 'icons/addTransação-Vector.svg' %}" class="vector" alt="Ícone">
         <span class="adicionar-transacao">Adicionar Transação</span>
       </button>
-      
-    
-  </div>
-  
-  <div class="frame-211">
-      <div class="frame-210">
-          <div class="frame-209">
-            <div class="dropdown">
-                <select class="dropdown-button-ultimos-7dias" id="tipo-periodo" required>
-                    <option value="7-dias">Últimos 7 Dias</option>
-                    <option value="15-dias">Últimos 15 Dias</option>
-                    <option value="30-dias">Últimos 30 Dias</option>
-                </select>
-            </div>
-            
-            <div class="date-picker">
-                <label for="data-inicial" class="date-picker-button-inicial" onclick="toggleDatePicker()">
-                  <span id="dataInicialText">Data Inicial</span>
-                  <img src="{% static 'icons/calendario-vector.svg' %}" alt="Ícone" class="vector">
-                </label>
-                <input type="date" id="data-inicial" class="date-input" style="display: none;">
-              </div>
-              
-            <div class="date-picker">
-                <label for="data-final" class="date-picker-button-final" onclick="toggleDatePickerFinal()">
-                  <span id="dataFinalText">Data Final</span>
-                  <img src="{% static 'icons/calendario-vector.svg' %}" alt="Ícone" class="vector">
-                </label>
-                <input type="date" id="data-final" class="date-input" onchange="updateDateFinalText()" style="display: none;">
-              </div>
-              
-          </div>
-          <div class="frame-208">
-            <button class="botao-filtros">
-                <span class="filtros">Filtros</span>
-                <span class="vector"></span>
-            </button>
-            <div class="barra-pesquisa">
-                <input type="text" class="input-pesquisa" placeholder="Pesquisar">
-                <span class="vector-pesquisa">
-                  <img src="{% static 'icons/search-icon.svg' %}" alt="Ícone de pesquisa">
-                </span>
-              </div>
-              
-          </div>
+    </div>
+
+    <div class="frame-210">
+      <div class="frame-209">
+        <button class="date-picker-button-inicial" onclick="toggleDatePicker()">
+          <img src="{% static 'icons/filtros-Vector.svg' %}" class="vector" alt="Ícone">
+          <span id="dataInicialText">Data Inicial</span>
+          <input type="date" id="data-inicial" class="date-input" onchange="updateDateText()">
+        </button>
+        <button class="date-picker-button-final" onclick="toggleDatePickerFinal()">
+          <img src="{% static 'icons/filtros-Vector.svg' %}" class="vector" alt="Ícone">
+          <span id="dataFinalText">Data Final</span>
+          <input type="date" id="data-final" class="date-input" onchange="updateDateFinalText()">
+        </button>
       </div>
-      
-      <div class="tabela-transacoes">
-          <table>
-              <thead>
-                  <tr>
-                      <th>Item</th>
-                      <th>Data</th>
-                      <th>Valor</th>
-                      <th>Tipo</th>
-                      <th>Banco/Conta</th>
-                      <th>Categoria</th>
-                      <th></th>
-                  </tr>
-              </thead>
-              <tbody>
-                  <tr>
-                      <td>
-                          <div class="item-container">
-                              <div class="item-icon">
-                                  <img src="{% static 'icons/Apple-Store-icon.svg' %}" alt="Apple Store icon">
-                              </div>
-                              <div class="item-name">Apple Store</div>
-                          </div>
-                      </td>
-                      <td>10 out 2024</td>
-                      <td>R$ 7.199,00</td>
-                      <td><span class="tipo despesa">Despesa</span></td>
-                      <td><span class="banco nubank">Nubank</span></td>
-                      <td><span class="categoria compras">
-                          <span class="vector"></span>
-                          Compras
-                      </span></td>
-                      <td>
-                          <div class="actions">
-                              <div class="dots"></div>
-                          </div>
-                      </td>
-                  </tr>
-                  <!-- Repetir a estrutura para as outras linhas -->
-              </tbody>
-          </table>
+      <div class="frame-208">
+        <div class="dropdown">
+          <button class="dropdown-button-ultimos-7dias" onclick="toggleDropdown()">
+            <img src="{% static 'icons/filtros-Vector.svg' %}" class="vector" alt="Ícone">
+            Últimos 7 dias
+            <img src="{% static 'icons/arrow-down.svg' %}" class="vector" id="iconeExpandir" alt="Ícone">
+          </button>
+          <div class="dropdown-content" id="dropdownContent">
+            <a href="#">Últimos 30 dias</a>
+            <a href="#">Últimos 90 dias</a>
+            <a href="#">Este mês</a>
+            <a href="#">Este ano</a>
+          </div>
+        </div>
+        <div class="barra-pesquisa">
+          <img src="{% static 'icons/search-icon.svg' %}" class="vector-pesquisa" alt="Ícone de pesquisa">
+          <input type="text" class="input-pesquisa" placeholder="Pesquisar transações">
+        </div>
       </div>
+    </div>
+
+    <div class="tabela-transacoes">
+      <table>
+        <thead>
+          <tr>
+            <th>Item</th>
+            <th>Data</th>
+            <th>Valor</th>
+            <th>Tipo</th>
+            <th>Banco/Conta</th>
+            <th>Categoria</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for transacao in transacoes %}
+            <tr>
+              <td>
+                <div class="item-container">
+                  <div class="item-icon">
+                    <img src="{% static 'icons/Apple-Store-icon.svg' %}" alt="Apple Store">
+                  </div>
+                  <span class="item-name">{{ transacao.nome }}</span>
+                </div>
+              </td>
+              <td>{{ transacao.data }}</td>
+              <td>{{ transacao.valor|floatformat:2 }}</td>
+              <td class="tipo {% if transacao.tipo == 'Despesa' %}despesa{% else %}receita{% endif %}">{{ transacao.tipo }}</td>
+              <td class="banco {% if transacao.banco == 'Nubank' %}nubank{% elif transacao.banco == 'Itaú' %}itau{% endif %}">{{ transacao.banco }}</td>
+              <td>
+                <div class="categoria {% if transacao.categoria == 'Compras' %}compras{% elif transacao.categoria == 'Transporte' %}transporte{% endif %}">
+                  <img src="{% static 'icons/categoria-icon.svg' %}" alt="Ícone de categoria">
+                  {{ transacao.categoria }}
+                </div>
+              </td>
+              <td class="actions">
+                <div class="dots">
+                  <span></span>
+                  <span></span>
+                  <span></span>
+                </div>
+                <a href="#" class="editar-transacao">Editar</a>
+                <a href="#" class="excluir-transacao">Excluir</a>
+              </td>
+            </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
   </div>
-</div>
+
+  <div id="novaTransacaoModal" class="modal">
+    <div class="modal-content">
+      <span class="close-button" onclick="fecharModalNovaTransacao()">&times;</span>
+      <h2>Nova Transação</h2>
+      {% csrf_token %}
+      {{ form.as_p }}
+      <button type="submit">Salvar</button>
+    </div>
+  </div>
 {% endblock %}
