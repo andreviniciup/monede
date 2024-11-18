@@ -3,9 +3,72 @@
 
 {% block extra_css %}
 <link rel="stylesheet" href="{% static 'financas/css/minhas_contas.css' %}">
+<script src="{% static 'js/minhas_contas.js' %}"></script>
 {% endblock %}
 
 {% block title %}Minhas Contas{% endblock %}
 
 {% block content %}
+<div class="painel-contas">
+    <div class="container-contas">
+        <div class="cabecalho">
+            <h1 class="titulo-pagina">Minhas Contas</h1>
+            <button class="botao-adicionar-conta" onclick="abrirModalConta()">
+                <span class="icone-adicionar">+</span>
+                Adicionar Nova Conta
+            </button>
+        </div>
+        
+        <div class="grade-contas">
+            {% for conta in contas %}
+            <div class="cartao-conta">
+                <div class="conteudo-cartao">
+                    <h3 class="titulo-conta">{{ conta.nome }}</h3>
+                    <p class="banco-conta">Banco: {{ conta.banco.nome }}</p>
+                    <p class="saldo-conta">Saldo Atual: R$ {{ conta.saldo|floatformat:2 }}</p>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+</div>
+
+<!-- Modal Conta -->
+<div id="modalConta" class="modal">
+    <div class="conteudo-modal">
+        <div class="cabecalho-modal">
+            <h2>Nova Conta</h2>
+            <button type="button" class="botao-fechar" onclick="fecharModalConta()">&times;</button>
+        </div>
+        <form method="post" action="{% url 'criar_conta' %}">
+            {% csrf_token %}
+            <div class="grupo-form">
+                <label for="nome">Nome da Conta*</label>
+                <input type="text" id="nome" name="nome" required 
+                       placeholder="ex: Conta Corrente" class="input-padrao">
+            </div>
+            
+            <div class="grupo-form">
+                <label for="banco">Banco*</label>
+                <select id="banco" name="banco" class="input-padrao" required>
+                    {% for banco in bancos %}
+                    <option value="{{ banco.id }}">{{ banco.nome }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+            
+            <div class="grupo-form">
+                <label for="saldo">Saldo Inicial*</label>
+                <div class="input-valor">
+                    <span class="prefixo-valor">R$</span>
+                    <input type="number" id="saldo" name="saldo" 
+                           step="0.01" required class="input-padrao"
+                           placeholder="0,00">
+                </div>
+            </div>
+            
+            <button type="submit" class="botao-criar">Criar Conta</button>
+        </form>
+    </div>
+</div>
 {% endblock %}

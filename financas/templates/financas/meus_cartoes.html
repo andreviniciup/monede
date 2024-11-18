@@ -3,6 +3,7 @@
 
 {% block extra_css %}
 <link rel="stylesheet" href="{% static 'financas/css/meus_cartoes.css' %}">
+<script src="{% static 'js/meus_cartoes.js' %}"></script>
 {% endblock %}
 
 {% block title %}Meus Cartões{% endblock %}
@@ -39,7 +40,7 @@
                 Pagar Fatura
             </button>
             {% endif %}
-            <a href="{% url 'transacoes' cartao.id %}" class="btn-transacoes">
+            <a href="{% url 'transacoes_cartao' cartao.id %}" class="btn-transacoes">
                 Ver Transações
             </a>
         </div>

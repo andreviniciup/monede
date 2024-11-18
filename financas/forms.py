@@ -1,5 +1,5 @@
 from django import forms
-from .models import Transacao, Pagamento, Categoria, Subcategoria
+from .models import Transacao, Pagamento, Categoria, Subcategoria, Cartao, TransacaoCartao, Banco, Conta
 
 class TransacaoForm(forms.ModelForm):
     class Meta:
@@ -46,10 +46,30 @@ class CartaoForm(forms.ModelForm):
             'data_vencimento': forms.DateInput(attrs={'type': 'date'}),
         }
 
+
 class TransacaoCartaoForm(forms.ModelForm):
     class Meta:
-        model = Transacao
+        model = TransacaoCartao
         fields = ['valor', 'descricao', 'data']
         widgets = {
             'data': forms.DateInput(attrs={'type': 'date'}),
+        }
+
+class BancoForm(forms.ModelForm):
+    class Meta:
+        model = Banco
+        fields = ['nome', 'icone']
+        widgets = {
+            'nome': forms.TextInput(attrs={'class': 'form-control'}),
+            'icone': forms.FileInput(attrs={'class': 'form-control'}),
+        }
+
+class ContaForm(forms.ModelForm):
+    class Meta:
+        model = Conta
+        fields = ['banco', 'titulo', 'saldo']
+        widgets = {
+            'banco': forms.Select(attrs={'class': 'form-control'}),
+            'titulo': forms.TextInput(attrs={'class': 'form-control'}),
+            'saldo': forms.NumberInput(attrs={'class': 'form-control', 'step': '0.01'}),
         }

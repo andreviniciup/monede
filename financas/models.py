@@ -195,10 +195,31 @@ class Cartao(models.Model):
     class Meta:
         verbose_name = 'Cartão'
         verbose_name_plural = 'Cartões'
-        
+    
     def __str__(self):
         return self.nome_cartao
-        
+    
     def valor_fatura(self):
-        transacoes = self.transacao_set.all()
+        transacoes = self.transacoes_cartao.all()  # Mudança para acessar transações específicas de cartão
         return sum(t.valor for t in transacoes)
+
+class TransacaoCartao(models.Model):
+    cartao = models.ForeignKey(Cartao, on_delete=models.CASCADE, related_name='transacoes_cartao')
+    valor = models.DecimalField(max_digits=10, decimal_places=2)
+    descricao = models.CharField(max_length=255)
+    data = models.DateField()
+
+    def __str__(self):
+        return f"{self.descricao} - {self.valor}"
+    
+
+class Banco(models.Model):
+    nome = models.CharField(max_length=100)
+    icone = models.ImageField(upload_to='bancos/')
+
+class Conta(models.Model):
+    usuario = models.ForeignKey(User, on_delete=models.CASCADE)
+    banco = models.ForeignKey(Banco, on_delete=models.SET_NULL, null=True)
+    titulo = models.CharField(max_length=100)
+    saldo = models.DecimalField(max_digits=10, decimal_places=2)
+    criado_em = models.DateTimeField(auto_now_add=True)

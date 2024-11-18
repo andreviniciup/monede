@@ -4,8 +4,8 @@ from django.shortcuts import render, redirect,  get_object_or_404
 from django.http import JsonResponse
 from django.utils import timezone
 from django.http import JsonResponse
-from .models import Transacao, Categoria, DespesaPlanejada, Pagamento, Meta, Limites , Subcategoria, Cartao
-from .forms import TransacaoForm, PagamentoForm, CategoriaForm, SubcategoriaForm, CartaoForm, TransacaoCartaoForm
+from .models import Transacao, Categoria, DespesaPlanejada, Pagamento, Meta, Limites , Subcategoria, Cartao, Conta, Banco
+from .forms import TransacaoForm, PagamentoForm, CategoriaForm, SubcategoriaForm, CartaoForm, TransacaoCartaoForm, ContaForm, BancoForm
 import json
 from datetime import datetime, timedelta
 
@@ -186,40 +186,77 @@ def plano_de_gastos_view(request):
 def minhas_contas(request):
     return render(request, 'financas/minhas_contas.html')
 
-def meus_cartoes(request):
-    return render(request, 'financas/meus_cartoes.html')
+def listar_bancos(request):
+    bancos = Banco.objects.all()
+    if request.method == 'POST':
+        form = BancoForm(request.POST, request.FILES)
+        if form.is_valid():
+            form.save()
+            return redirect('minhas_contasBancos')
+    else:
+        form = BancoForm()
+
+    contexto = {'bancos': bancos, 'form': form}
+    return render(request, 'financas/minhas_contasBancos.html', contexto)
+
+def lista_contas_view(request):
+    contas = Conta.objects.filter(usuario=request.user)
+    bancos = Banco.objects.all()
+    context = {
+        'contas': contas,
+        'bancos': bancos
+    }
+    return render(request, 'financas/contas.html', context)
+
+def criar_conta_view(request):
+    if request.method == 'POST':
+        nome = request.POST.get('nome')
+        banco_id = request.POST.get('banco')
+        saldo = request.POST.get('saldo')
+        
+        try:
+            banco = Banco.objects.get(id=banco_id)
+            Conta.objects.create(
+                nome=nome,
+                banco=banco,
+                saldo=saldo,
+                usuario=request.user
+            )
+            messages.success(request, 'Conta criada com sucesso!')
+            return redirect('lista-contas')
+        except Exception as e:
+            messages.error(request, 'Erro ao criar conta. Verifique os dados e tente novamente.')
+
+    return redirect('lista-contas')
 
 
 def lista_cartoes(request):
     cartoes = Cartao.objects.all()
     form = CartaoForm()
-    return render(request, 'financas/lista_cartoes.html', {
+    return render(request, 'financas/meus_cartoes.html', {
         'cartoes': cartoes,
         'form': form
     })
-
 
 def adicionar_cartao(request):
     if request.method == 'POST':
         form = CartaoForm(request.POST)
         if form.is_valid():
             form.save()
-            return redirect('lista_cartoes')
-    return redirect('lista_cartoes')
-
+            return redirect('meus_cartoes')
+    return redirect('meus_cartoes')
 
 def pagar_fatura(request, cartao_id):
     if request.method == 'POST':
-        cartao = Cartao.objects.get(id=cartao_id)
+        cartao = get_object_or_404(Cartao, id=cartao_id)
         cartao.status = 'FECHADA'
         cartao.save()
         return JsonResponse({'status': 'success'})
     return JsonResponse({'status': 'error'}, status=400)
 
-
-def transacoesCartao(request, cartao_id):
-    cartao = Cartao.objects.get(id=cartao_id)
-    transacoes = cartao.transacao_set.all()
+def transacoes_cartao(request, cartao_id):
+    cartao = get_object_or_404(Cartao, id=cartao_id)
+    transacoes = cartao.transacoes_cartao.all()  # Acessando o related_name 'transacoes_cartao'
     
     data_inicial = request.GET.get('data_inicial')
     data_final = request.GET.get('data_final')
@@ -229,7 +266,7 @@ def transacoesCartao(request, cartao_id):
     
     form = TransacaoCartaoForm()
     
-    return render(request, 'cartoes/transacoes.html', {
+    return render(request, 'financas/meus_cartoesTransacoes.html', {
         'cartao': cartao,
         'transacoes': transacoes,
         'form': form
@@ -240,10 +277,10 @@ def adicionar_transacao(request, cartao_id):
         form = TransacaoCartaoForm(request.POST)
         if form.is_valid():
             transacao = form.save(commit=False)
-            transacao.cartao_id = cartao_id
+            transacao.cartao_id = cartao_id  
             transacao.save()
-            return redirect('transacoes', cartao_id=cartao_id)
-    return redirect('transacoes', cartao_id=cartao_id)
+            return redirect('meus_cartoesTransacoes', cartao_id=cartao_id)
+    return redirect('meus_cartoesTransacoes', cartao_id=cartao_id)
 
 def meus_limites(request):
     return render(request, 'financas/meus_limites.html')
