@@ -8,4 +8,72 @@
 {% block title %}Meus Cartões{% endblock %}
 
 {% block content %}
+<div class="cartoes-header">
+    <h1>Meus Cartões</h1>
+    <button class="btn-adicionar" onclick="abrirModalCartao()">
+        Adicionar
+    </button>
+</div>
+
+<div class="cartoes-grid">
+    {% for cartao in cartoes %}
+    <div class="cartao-card">
+        <div class="cartao-header">
+            {% if cartao.tipo_cartao == 'MASTER' %}
+            <img src="/static/img/mastercard.svg" alt="Mastercard">
+            {% else %}
+            <img src="/static/img/inter.svg" alt="Inter">
+            {% endif %}
+            <h3>{{ cartao.nome_cartao }}</h3>
+        </div>
+        
+        <div class="cartao-info">
+            <p class="valor-fatura">R$ {{ cartao.valor_fatura|floatformat:2 }}</p>
+            <p class="data-fechamento">Fechamento: {{ cartao.data_fechamento|date:"d/m/Y" }}</p>
+            <p class="status {{ cartao.status|lower }}">{{ cartao.get_status_display }}</p>
+        </div>
+        
+        <div class="cartao-acoes">
+            {% if cartao.status == 'ABERTA' %}
+            <button class="btn-pagar" onclick="pagarFatura({{ cartao.id }})">
+                Pagar Fatura
+            </button>
+            {% endif %}
+            <a href="{% url 'transacoes' cartao.id %}" class="btn-transacoes">
+                Ver Transações
+            </a>
+        </div>
+    </div>
+    {% endfor %}
+</div>
+
+<!-- Modal Adicionar Cartão -->
+<div id="modalCartao" class="modal">
+    <div class="modal-conteudo">
+        <h2>Novo Cartão</h2>
+        <form id="formCartao" method="post" action="{% url 'adicionar_cartao' %}">
+            {% csrf_token %}
+            <div class="form-grupo">
+                <label for="{{ form.nome_cartao.id_for_label }}">Nome do Cartão</label>
+                {{ form.nome_cartao }}
+            </div>
+            <div class="form-grupo">
+                <label for="{{ form.tipo_cartao.id_for_label }}">Bandeira</label>
+                {{ form.tipo_cartao }}
+            </div>
+            <div class="form-grupo">
+                <label for="{{ form.data_fechamento.id_for_label }}">Data de Fechamento</label>
+                {{ form.data_fechamento }}
+            </div>
+            <div class="form-grupo">
+                <label for="{{ form.data_vencimento.id_for_label }}">Data de Vencimento</label>
+                {{ form.data_vencimento }}
+            </div>
+            <div class="modal-acoes">
+                <button type="button" class="btn-cancelar" onclick="fecharModalCartao()">Cancelar</button>
+                <button type="submit" class="btn-confirmar">Confirmar</button>
+            </div>
+        </form>
+    </div>
+</div>
 {% endblock %}

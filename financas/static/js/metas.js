@@ -1,5 +1,3 @@
-// static/financas/js/metas.js
-
 console.log('Script metas.js carregado');
 
 document.addEventListener('DOMContentLoaded', function() {

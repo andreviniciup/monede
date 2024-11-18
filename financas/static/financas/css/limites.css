@@ -1,0 +1,130 @@
+/* static/css/limits.css */
+.limit-container {
+    max-width: 600px;
+    margin: 0 auto;
+    padding: 20px;
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+}
+
+.header {
+    display: flex;
+    align-items: center;
+    margin-bottom: 40px;
+}
+
+.back-button {
+    color: #000;
+    text-decoration: none;
+    margin-right: 20px;
+    font-size: 24px;
+}
+
+h1 {
+    font-size: 24px;
+    font-weight: 500;
+    margin: 0;
+}
+
+h2 {
+    font-size: 28px;
+    font-weight: 500;
+    margin-bottom: 30px;
+}
+
+.form-group {
+    margin-bottom: 24px;
+}
+
+label {
+    display: block;
+    margin-bottom: 8px;
+    color: #333;
+    font-size: 16px;
+}
+
+.select-wrapper {
+    position: relative;
+}
+
+select, input[type="text"], input[type="number"] {
+    width: 100%;
+    padding: 15px;
+    border: 1px solid #E5E5E5;
+    border-radius: 12px;
+    font-size: 16px;
+    appearance: none;
+    background: white;
+}
+
+.select-wrapper i {
+    position: absolute;
+    right: 15px;
+    top: 50%;
+    transform: translateY(-50%);
+    color: #666;
+}
+
+.value-input-wrapper {
+    position: relative;
+    margin-bottom: 10px;
+}
+
+.currency {
+    position: absolute;
+    left: 15px;
+    top: 50%;
+    transform: translateY(-50%);
+    color: #333;
+}
+
+input[name="valor"] {
+    padding-left: 45px;
+}
+
+input[type="range"] {
+    width: 100%;
+    margin-top: 10px;
+}
+
+.date-options {
+    display: flex;
+    gap: 10px;
+    flex-wrap: wrap;
+}
+
+.date-option {
+    flex: 1;
+    padding: 12px 20px;
+    border: 1px solid #E5E5E5;
+    border-radius: 12px;
+    text-align: center;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+input[type="radio"] {
+    display: none;
+}
+
+input[type="radio"]:checked + .date-option {
+    background: #000;
+    color: white;
+    border-color: #000;
+}
+
+.create-button {
+    width: 100%;
+    padding: 16px;
+    background: #000;
+    color: white;
+    border: none;
+    border-radius: 12px;
+    font-size: 16px;
+    cursor: pointer;
+    margin-top: 20px;
+    transition: background-color 0.3s ease;
+}
+
+.create-button:hover {
+    background: #333;
+}

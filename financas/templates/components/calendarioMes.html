@@ -4,23 +4,23 @@
 <script src="{% static 'js/calendarioMes.js' %}"></script>
 {% endblock %}
 
-<div class="calendar-wrapper">
-  <input type="text" class="input-box" readonly>
-  <div class="calendar-element">
-    <div class="calendar-header">
-      <button class="prev-month">
-        <img src="{% static 'icons/seta-transacoes-calendar.svg' %}" alt="Ícone" class="vector_prev">
-      </button>
-      <span class="current-month-year"></span>
-      <button class="next-month">
-        <img src="{% static 'icons/seta-transacoes-calendar.svg' %}" alt="Ícone" class="vector_netx">
-      </button>
-    </div>
-    <div class="calendar-grid">
-      <!-- Calendar days will be dynamically generated here -->
-    </div>
-    <div class="calendar-footer">
-      <button class="apply-btn">Aplicar</button>
-    </div>
+<div class="date-picker">
+  <input type="text" id="date-input" placeholder="Selecione uma data" readonly>
+  <div class="calendar" id="calendar">
+      <div class="calendar-header">
+          <span id="prev-month">&lt;</span>
+          <span id="month-year"></span>
+          <span id="next-month">&gt;</span>
+      </div>
+      <div class="calendar-body">
+          <div class="calendar-weekdays">
+              <span>Dom</span><span>Seg</span><span>Ter</span><span>Qua</span><span>Qui</span><span>Sex</span><span>Sáb</span>
+          </div>
+          <div class="calendar-days" id="calendar-days"></div>
+      </div>
+      <div class="calendar-footer">
+          <button id="cancel-btn">Cancelar</button>
+          <button id="apply-btn">Aplicar</button>
+      </div>
   </div>
 </div>

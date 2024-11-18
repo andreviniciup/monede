@@ -4,8 +4,8 @@ from django.shortcuts import render, redirect,  get_object_or_404
 from django.http import JsonResponse
 from django.utils import timezone
 from django.http import JsonResponse
-from .models import Transacao, Categoria, DespesaPlanejada, Pagamento, Meta
-from .forms import TransacaoForm, PagamentoForm
+from .models import Transacao, Categoria, DespesaPlanejada, Pagamento, Meta, Limites , Subcategoria, Cartao
+from .forms import TransacaoForm, PagamentoForm, CategoriaForm, SubcategoriaForm, CartaoForm, TransacaoCartaoForm
 import json
 from datetime import datetime, timedelta
 
@@ -183,20 +183,155 @@ def plano_de_gastos_view(request):
     return render(request, 'financas/plano_de_gastos.html', context)
 
 
-def editar_perfil(request):
-    return render(request, 'financas/editar_perfil.html')
-
 def minhas_contas(request):
     return render(request, 'financas/minhas_contas.html')
 
 def meus_cartoes(request):
     return render(request, 'financas/meus_cartoes.html')
 
+
+def lista_cartoes(request):
+    cartoes = Cartao.objects.all()
+    form = CartaoForm()
+    return render(request, 'financas/lista_cartoes.html', {
+        'cartoes': cartoes,
+        'form': form
+    })
+
+
+def adicionar_cartao(request):
+    if request.method == 'POST':
+        form = CartaoForm(request.POST)
+        if form.is_valid():
+            form.save()
+            return redirect('lista_cartoes')
+    return redirect('lista_cartoes')
+
+
+def pagar_fatura(request, cartao_id):
+    if request.method == 'POST':
+        cartao = Cartao.objects.get(id=cartao_id)
+        cartao.status = 'FECHADA'
+        cartao.save()
+        return JsonResponse({'status': 'success'})
+    return JsonResponse({'status': 'error'}, status=400)
+
+
+def transacoesCartao(request, cartao_id):
+    cartao = Cartao.objects.get(id=cartao_id)
+    transacoes = cartao.transacao_set.all()
+    
+    data_inicial = request.GET.get('data_inicial')
+    data_final = request.GET.get('data_final')
+    
+    if data_inicial and data_final:
+        transacoes = transacoes.filter(data__range=[data_inicial, data_final])
+    
+    form = TransacaoCartaoForm()
+    
+    return render(request, 'cartoes/transacoes.html', {
+        'cartao': cartao,
+        'transacoes': transacoes,
+        'form': form
+    })
+
+def adicionar_transacao(request, cartao_id):
+    if request.method == 'POST':
+        form = TransacaoCartaoForm(request.POST)
+        if form.is_valid():
+            transacao = form.save(commit=False)
+            transacao.cartao_id = cartao_id
+            transacao.save()
+            return redirect('transacoes', cartao_id=cartao_id)
+    return redirect('transacoes', cartao_id=cartao_id)
+
 def meus_limites(request):
     return render(request, 'financas/meus_limites.html')
 
-def categorias(request):
-    return render(request, 'financas/categorias.html')
+def novo_limite(request):
+    if request.method == 'POST':
+        categoria_id = request.POST.get('categoria')
+        titulo = request.POST.get('titulo')
+        valor = request.POST.get('valor')
+        recorrencia = request.POST.get('recorrencia')
+        data_inicio = request.POST.get('data_inicio')
+        
+        
+        categoria = Categoria.objects.get(id=categoria_id)
+        
+        
+        Limites.objects.create(
+            categoria=categoria,
+            titulo=titulo,
+            valor=valor,
+            recorrencia=recorrencia,
+            data_inicio=data_inicio
+        )
+        
+        return redirect('dashboard')
+    
+    
+    categories = Categoria.objects.all().order_by('name')
+    return render(request, 'limits/novo_limite.html', {'categories': categories})
 
-def subcategorias(request):
-    return render(request, 'financas/subcategorias.html')
+# API view to get categories (optional - for dynamic loading)
+def get_categories(request):
+    categories = Categoria.objects.all().order_by('name')
+    return JsonResponse({
+        'categories': list(categories.values('id', 'name', 'icon'))
+    })
+
+
+def listar_categorias(request):
+    categorias_usuario = Categoria.objects.filter(padrao=False)
+    categorias_padrao = Categoria.objects.filter(padrao=True)
+    formulario = CategoriaForm()
+    
+    contexto = {
+        'categorias_usuario': categorias_usuario,
+        'categorias_padrao': categorias_padrao,
+        'formulario': formulario,
+    }
+    return render(request, 'financas/categorias.html', contexto)
+
+def criar_categoria(request):
+    if request.method == 'POST':
+        formulario = CategoriaForm(request.POST)
+        if formulario.is_valid():
+            formulario.save()
+            return redirect('categorias')
+        else:
+            messages.error(request, "Erro ao criar a categoria. Verifique os dados do formulário.")
+    return redirect('categorias')
+
+
+
+# API view to get subcategories (optional - for dynamic loading)
+def get_subcategories(request):
+    subcategories = Subcategoria.objects.all().order_by('name')
+    return JsonResponse({
+        'subcategories': list(subcategories.values('id', 'name', 'icon'))
+    })
+
+
+def listar_subcategorias(request):
+    subcategorias_usuario = Subcategoria.objects.filter(padrao=False)
+    subcategorias_padrao = Subcategoria.objects.filter(padrao=True)
+    formulario = SubcategoriaForm()
+    
+    contexto = {
+        'subcategorias_usuario': subcategorias_usuario,
+        'subcategorias_padrao': subcategorias_padrao,
+        'formulario': formulario,
+    }
+    return render(request, 'financas/subcategorias.html', contexto)
+
+def criar_subcategoria(request):
+    if request.method == 'POST':
+        formulario = SubcategoriaForm(request.POST)
+        if formulario.is_valid():
+            formulario.save()
+            return redirect('subcategorias')
+        else:
+            messages.error(request, "Erro ao criar a subcategoria. Verifique os dados do formulário.")
+    return redirect('subcategorias')
