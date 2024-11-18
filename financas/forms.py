@@ -1,5 +1,5 @@
 from django import forms
-from .models import Transacao, Pagamento, Categoria, Subcategoria
+from .models import Transacao, Pagamento, Categoria, Subcategoria, Cartao
 
 class TransacaoForm(forms.ModelForm):
     class Meta:
@@ -49,7 +49,7 @@ class CartaoForm(forms.ModelForm):
 class TransacaoCartaoForm(forms.ModelForm):
     class Meta:
         model = Transacao
-        fields = ['valor', 'descricao', 'data']
+        fields = ['valor', 'descricao']
         widgets = {
-            'data': forms.DateInput(attrs={'type': 'date'}),
+            'valor': forms.DateInput(attrs={'step': '0.01'}),
         }
