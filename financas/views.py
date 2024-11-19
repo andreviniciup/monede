@@ -1,3 +1,4 @@
+from django.contrib.contenttypes.models import ContentType
 from django.contrib.auth.forms import UserCreationForm
 from django.core.files.base import ContentFile
 from django.contrib import messages
@@ -5,6 +6,7 @@ from django.shortcuts import render, redirect,  get_object_or_404
 from django.http import JsonResponse
 from django.utils import timezone
 from django.http import JsonResponse
+from django.db.models import Q
 from .models import Transacao, Categoria, DespesaPlanejada, Pagamento, Meta, Limites , Subcategoria, Cartao, Conta, Banco, Logo
 from .forms import TransacaoForm, PagamentoForm, CategoriaForm, SubcategoriaForm, CartaoForm, TransacaoCartaoForm, ContaForm, BancoForm
 import json
@@ -34,7 +36,26 @@ def inicio_view(request):
 
 def obter_logo_via_api(marca_nome):
     """
-    Função para buscar o logo via API da Clearbit usando o nome da marca.
+    Tenta obter o logo de uma marca utilizando múltiplas fontes.
+    """
+    fontes = [buscar_logo_brandfetch, buscar_logo_clearbit]  
+    
+    for fonte in fontes:
+        logo = fonte(marca_nome)  # Tenta buscar o logo com cada fonte
+        if logo:  # Se encontrar um logo, retorna
+            return logo
+    
+    # Retorna logo padrão se nenhuma fonte encontrar
+    print(f"Logo não encontrado para {marca_nome}. Usando logo padrão.")
+    logo, _ = Logo.objects.get_or_create(
+        nome="Padrão",
+        defaults={"imagem": "path/para/logo-padrao.png"}
+    )
+    return logo
+
+def buscar_logo_clearbit(marca_nome):
+    """
+    Busca o logo no Clearbit.
     """
     dominio = marca_nome.lower() + ".com"
     url_logo = f"https://logo.clearbit.com/{dominio}"
@@ -42,17 +63,52 @@ def obter_logo_via_api(marca_nome):
     try:
         response = requests.get(url_logo)
         response.raise_for_status()
-
-        logo, criado = Logo.objects.get_or_create(nome=marca_nome)
         
+        logo, criado = Logo.objects.get_or_create(nome=marca_nome)
         if criado:
             logo.imagem.save(f"{marca_nome}.png", ContentFile(response.content), save=True)
-            print(f"Logo para {marca_nome} adicionado com sucesso via API.")
+            print(f"Logo para {marca_nome} adicionado com sucesso via Clearbit.")
         
         return logo
-
+    
     except requests.exceptions.RequestException as e:
-        print(f"Erro ao obter o logo para {marca_nome}: {e}")
+        print(f"Erro no Clearbit para {marca_nome}: {e}")
+        return None
+
+def buscar_logo_brandfetch(marca_nome):
+    """
+    Busca o logo em formato SVG no Brandfetch.
+    """
+    api_key = "ZcieYBn6Hg1UT9emBlVg3iyCYqTBttnMe7HmU+xQmQ8="  
+    url = f"https://api.brandfetch.io/v2/brands/{marca_nome.lower()}.com"
+    
+    headers = {"Authorization": f"Bearer {api_key}"}
+    
+    try:
+        response = requests.get(url, headers=headers)
+        response.raise_for_status()
+        
+        data = response.json()
+        # Procurar por um logo em formato SVG
+        logos = data.get("logos", [])
+        svg_logo_url = next((logo["url"] for logo in logos if logo["type"] == "svg"), None)
+        
+        if svg_logo_url:
+            response_logo = requests.get(svg_logo_url)
+            response_logo.raise_for_status()
+            
+            logo, criado = Logo.objects.get_or_create(nome=marca_nome)
+            if criado:
+                logo.imagem.save(f"{marca_nome}.svg", ContentFile(response_logo.content), save=True)
+                print(f"Logo SVG para {marca_nome} adicionado com sucesso via Brandfetch.")
+            
+            return logo
+        
+        print(f"Logo SVG para {marca_nome} não encontrado no Brandfetch.")
+        return None
+    
+    except requests.exceptions.RequestException as e:
+        print(f"Erro no Brandfetch para {marca_nome}: {e}")
         return None
 
 def transacoes_view(request):
@@ -85,33 +141,115 @@ def transacoes_view(request):
 
     return render(request, 'financas/transacoes.html', {'transacoes': transacoes, 'form': form})
 
+
 def nova_transacao(request):
     if request.method == 'POST':
-        form = TransacaoForm(request.POST)
-        if form.is_valid():
-            transacao = form.save(commit=False)
+        titulo = request.POST.get('titulo')
+        valor = request.POST.get('valor')
+        categoria_id = request.POST.get('categoria')
+        conta_id = request.POST.get('conta')
+        tipo = request.POST.get('tipo')  # Verifique se há um campo 'tipo' no formulário
+        
+        # Verifique se data automática está ativada
+        data_automatica = request.POST.get('data_automatica')
+        data = request.POST.get('data') if not data_automatica else timezone.now()
+        
+        try:
+            # Buscar categoria e conta associadas
+            categoria = Categoria.objects.get(id=categoria_id) if categoria_id else None
             
-            # Usar o modelo de ML para prever a marca com base no título da transação
-            marca_prevista = modelo_ml.predict([transacao.titulo])[0]
+            # Prever marca com o modelo de ML
+            marca_prevista = modelo_ml.predict([titulo])[0]
             
-            # Buscar o logo diretamente via API, se não existir no banco
+            # Buscar ou obter logo via API
             logo = Logo.objects.filter(nome__iexact=marca_prevista).first()
             if not logo:
                 logo = obter_logo_via_api(marca_prevista)
+
+            # Criar a transação
+            Transacao.objects.create(
+                titulo=titulo,
+                valor=valor,
+                data=data,
+                categoria=categoria,
+                tipo=tipo,
+                logo=logo
+            )
             
-            # Associar o logo previsto à transação
-            if logo:
-                transacao.logo = logo
-
-            transacao.save()
-            messages.success(request, 'Transação adicionada com sucesso.')
+            messages.success(request, 'Transação criada com sucesso!')
             return redirect('transacoes')
-        else:
-            messages.error(request, 'Erro ao adicionar transação. Verifique os dados e tente novamente.')
-    else:
-        form = TransacaoForm()
+        except Exception as e:
+            print(f"Erro: {e}")
+            messages.error(request, f'Erro ao criar transação: {e}')
+    
+    # Caso GET ou erro no POST, redirecionar para o formulário
+    categorias = Categoria.objects.all()
+    contas = Conta.objects.all()
+    return render(request, 'financas/transacoes.html', {'categorias': categorias, 'contas': contas})
 
-    return render(request, 'financas/nova_transacao.html', {'form': form})
+
+def buscar_transacoes(request):
+    try:
+        query = request.GET.get('q', '')  # Captura o termo da pesquisa
+        resultados = Transacao.objects.none()  # Inicia com um queryset vazio
+        colunas = [
+            ('titulo', 'titulo__icontains'),
+            ('valor', 'valor__icontains'),
+            ('data', 'data__icontains'),
+            ('categoria', 'categoria__nome__icontains'),
+            ('tipo', 'tipo__icontains'),
+        ]
+
+        # Testa as colunas em sequência
+        for nome_coluna, filtro_coluna in colunas:
+            if not resultados.exists():  # Continua apenas se não houver resultados
+                print(f"Buscando em {nome_coluna} com '{query}'...")
+                resultados = Transacao.objects.filter(**{filtro_coluna: query})
+                if resultados.exists():
+                    print(f"Resultados encontrados em {nome_coluna}: {resultados}")
+
+        # Adiciona filtro para forma de pagamento (Cartao ou Conta)
+        if not resultados.exists():
+            forma_pagamento_content_types = ContentType.objects.get_for_models(Cartao, Conta).values()
+            for content_type in forma_pagamento_content_types:
+                resultados = Transacao.objects.filter(
+                    forma_pagamento_type=content_type,
+                    forma_pagamento_id__in=content_type.model_class().objects.filter(nome__icontains=query).values_list('id', flat=True)
+                )
+                if resultados.exists():
+                    print(f"Resultados encontrados em forma de pagamento: {resultados}")
+                    break
+
+        # Serializar resultados para JSON
+        dados = []
+        for transacao in resultados:
+            forma_pagamento_nome = ''
+            if transacao.forma_pagamento:
+                forma_pagamento_nome = transacao.forma_pagamento.nome
+
+            logo_url = ''
+            if transacao.logo:
+                logo_url = transacao.logo.imagem.url
+
+            dados.append({
+                'titulo': transacao.titulo,
+                'valor': float(transacao.valor),
+                'data': transacao.data.strftime('%Y-%m-%d %H:%M:%S') if transacao.data else '',
+                'categoria': transacao.categoria.nome if transacao.categoria else '',
+                'tipo': transacao.tipo,
+                'forma_pagamento': forma_pagamento_nome,
+                'logo_url': logo_url,
+                'id': transacao.id
+            })
+
+        print(f"Resultados finais: {dados}")  # Exibe os resultados encontrados
+        return JsonResponse({'transacoes': dados, 'quantidade': resultados.count()})
+
+    except Exception as e:
+        # Registrar erro para debug
+        import traceback
+        traceback.print_exc()
+        return JsonResponse({'error': str(e)}, status=500)
 
 def relatorios_view(request):
     return render(request, 'financas/relatorios.html')

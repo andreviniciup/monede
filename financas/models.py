@@ -1,3 +1,5 @@
+from django.contrib.contenttypes.fields import GenericForeignKey
+from django.contrib.contenttypes.models import ContentType
 from django.contrib.auth.models import AbstractUser, User
 from django.db import models
 from django.utils import timezone
@@ -65,10 +67,14 @@ class Transacao(models.Model):
         on_delete=models.CASCADE,
         related_name='transacoes'
     )
-    nome = models.CharField(max_length=100, null=True)
-    descricao = models.TextField(null=True, blank=True)
+    titulo = models.CharField(max_length=100, null=True)
     data = models.DateTimeField(auto_now_add=True)
     logo = models.ForeignKey(Logo, on_delete=models.SET_NULL, null=True, blank=True)
+
+    # Campos para a relação genérica
+    forma_pagamento_type = models.ForeignKey(ContentType, on_delete=models.SET_NULL, null=True, blank=True)
+    forma_pagamento_id = models.PositiveIntegerField(null=True, blank=True)
+    forma_pagamento = GenericForeignKey('forma_pagamento_type', 'forma_pagamento_id')
 
     def __str__(self):
         return f'{self.tipo}/{self.categoria}: {self.valor}'

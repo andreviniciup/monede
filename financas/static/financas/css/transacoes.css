@@ -1,7 +1,7 @@
 .conteudo {
   max-width: 1150px;
   margin: auto;
-  padding: 70px 10px;
+  padding: 40px 10px;
 }
 
 .frame-212, .frame-210 {
@@ -146,7 +146,7 @@ table {
 
 th {
   color: #212121;
-  font-size: 12px;
+  font-size: 14px;
   font-family: "Nunito", Arial, sans-serif;
   text-align: left;
   padding: 0 10px;
@@ -169,6 +169,12 @@ th {
   align-items: center;
 }
 
+.item-icon img {
+  max-width: 100%; /* A largura máxima será igual à do contêiner */
+  max-height: 100%; /* A altura máxima será igual à do contêiner */
+  object-fit: contain; /* A imagem será ajustada mantendo suas proporções */
+}
+
 .item-name {
   font-size: 14px;
   font-family: "Nunito", Arial, sans-serif;
@@ -181,7 +187,7 @@ th {
 }
 
 .tipo.despesa {
-  color: #810C13;
+  color: #AC2323;
 }
 
 .tipo.receita {

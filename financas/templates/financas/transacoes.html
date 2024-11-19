@@ -23,13 +23,13 @@
         {% include 'components/calendarioMes.html' %}
         <div class="barra-pesquisa">
           <img src="{% static 'icons/search-icon.svg' %}" class="vector-pesquisa" alt="Ícone de pesquisa">
-          <input type="text" class="input-pesquisa" placeholder="Pesquisar transações">
+          <input type="text" class="input-pesquisa"  id="search-transactions"  placeholder="Pesquisar transações">
         </div>
       </div>
     </div>
 
     <div class="tabela-transacoes">
-      <table>
+      <table id="transactions-table">
         <thead>
           <tr>
             <th>Item</th>
@@ -46,14 +46,18 @@
               <td>
                 <div class="item-container">
                   <div class="item-icon">
-                    <img src="{% static 'icons/Apple-Store-icon.svg' %}" alt="Apple Store">
+                    {% if transacao.logo %}
+                       <img src="{{ transacao.logo.imagem.url }}" alt="{{ transacao.titulo }}">
+                      {% else %}
+                          <img src="{% static 'icons/default-icon.svg' %}" alt="Ícone padrão">
+                      {% endif %}
                   </div>
-                  <span class="item-name">{{ transacao.nome }}</span>
+                  <span class="item-name">{{ transacao.titulo }}</span>
                 </div>
               </td>
               <td>{{ transacao.data }}</td>
               <td>{{ transacao.valor|floatformat:2 }}</td>
-              <td class="tipo {% if transacao.tipo == 'Despesa' %}despesa{% else %}receita{% endif %}">{{ transacao.tipo }}</td>
+              <td class="tipo {% if transacao.tipo == 'DESPESA' %}despesa{% else %}receita{% endif %}">{{ transacao.tipo }}</td>
               <td class="banco {% if transacao.banco == 'Nubank' %}nubank{% elif transacao.banco == 'Itaú' %}itau{% endif %}">{{ transacao.banco }}</td>
               <td>
                 <div class="categoria {% if transacao.categoria == 'Compras' %}compras{% elif transacao.categoria == 'Transporte' %}transporte{% endif %}">
@@ -77,8 +81,6 @@
     </div>
   </div>
 
-
-
   <div id="modalTransacao" class="modal">
     <div class="conteudo-modal">
         <div class="cabecalho-modal">
@@ -88,41 +90,66 @@
         <form method="post" action="{% url 'nova_transacao' %}" enctype="multipart/form-data">
             {% csrf_token %}
             
+            <!-- Campo Título -->
             <div class="grupo-form">
                 <label for="titulo">Título*</label>
                 <input type="text" id="titulo" name="titulo" required 
                        placeholder="ex: compra no supermercado" class="input-padrao">
             </div>
             
+            <!-- Campo Valor -->
             <div class="grupo-form">
                 <label for="valor_transacao">Valor da transação*</label>
                 <div class="input-valor">
                     <span class="prefixo-valor">R$</span>
-                    <input type="number" id="valor_transacao" name="valor_transacao" 
+                    <input type="number" id="valor_transacao" name="valor" 
                            step="0.01" required class="input-padrao"
                            placeholder="0,00">
                 </div>
             </div>
             
+            <!-- Campo Data -->
             <div class="grupo-form">
                 <label for="data_transacao">Data da transação*</label>
                 <div class="input-data">
-                    <input type="checkbox" id="data_automatica" name="data_automatica">
+                    <input type="checkbox" id="data_automatica" name="data_automatica" onchange="toggleDataManual(this)">
                     <label for="data_automatica">Definir data automaticamente</label>
-                    <input type="date" id="data_transacao" name="data_transacao" class="input-padrao" required>
+                    <input type="date" id="data_transacao" name="data" class="input-padrao" required>
                 </div>
             </div>
             
+            <!-- Campo Categoria -->
             <div class="grupo-form">
-                <label for="categoria">Categoria (opcional)</label>
+                <label for="categoria">Categoria</label>
                 <select id="categoria" name="categoria" class="input-padrao">
-                    <option value="">selecionar a categoria</option>
+                    <option value="">Selecionar categoria</option>
                     {% for categoria in categorias %}
                     <option value="{{ categoria.id }}">{{ categoria.nome }}</option>
                     {% endfor %}
                 </select>
             </div>
-            
+
+            <!-- Campo Conta -->
+            <div class="grupo-form">
+                <label for="conta">Conta</label>
+                <select id="conta" name="conta" class="input-padrao">
+                    <option value="">Selecionar conta</option>
+                    {% for conta in contas %}
+                    <option value="{{ conta.id }}">{{ conta.nome }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+
+             <!-- Campo Tipo -->
+            <div class="grupo-form">
+              <label for="tipo">Tipo de Transação*</label>
+              <select id="tipo" name="tipo" class="input-padrao" required>
+                  <option value="RECEITA">Receita</option>
+                  <option value="DESPESA">Despesa</option>
+              </select>
+            </div>
+
+            <!-- Botão Criar -->
             <button type="submit" class="botao-criar">Criar Transação</button>
         </form>
     </div>

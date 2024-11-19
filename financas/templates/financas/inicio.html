@@ -42,14 +42,14 @@
     </div>
 
     <div class="tabela-transacoes">
-        <div>Transações</div>
+        <div class = "titulo-tabela">Transações</div>
         {% for transacao in transacoes %}
         <div class="item-tabela">
             <div class="frame-icon">
-                <img src="{{ transacao.icon_url }}" alt="{{ transacao.nome }}">
+                <img src="{{ transacao.logo.imagem.url }}" alt="{{ transacao.titulo }}">
             </div>
             <div class="transacao-info">
-                <div class="transacao-nome">{{ transacao.nome }}</div>
+                <div class="transacao-nome">{{ transacao.titulo }}</div>
                 <div class="transacao-data">{{ transacao.data|date:"d/m/Y H:i" }}</div>
             </div>
             <div class="transacao-valor">{{ transacao.valor }}</div>
