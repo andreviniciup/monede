@@ -55,7 +55,7 @@ class TransacaoCartaoForm(forms.ModelForm):
         model = TransacaoCartao
         fields = ['valor', 'descricao', 'data']
         widgets = {
-            'data': forms.DateInput(attrs={'type': 'date'}),
+            'valor': forms.DateInput(attrs={'step': '0.01'}),
         }
 
 class BancoForm(forms.ModelForm):
