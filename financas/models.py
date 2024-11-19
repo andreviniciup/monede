@@ -3,6 +3,16 @@ from django.db import models
 from django.utils import timezone
 from django.db import models
 
+
+class Logo(models.Model):
+    nome = models.CharField(max_length=100, unique=True)  
+    imagem = models.ImageField(upload_to='logos/')  
+    descricao = models.TextField(blank=True, null=True) 
+
+    def __str__(self):
+        return self.nome
+
+
 class Categoria(models.Model):
     nome = models.CharField(max_length=100)
     descricao = models.TextField(blank=True, null=True)
@@ -58,6 +68,7 @@ class Transacao(models.Model):
     nome = models.CharField(max_length=100, null=True)
     descricao = models.TextField(null=True, blank=True)
     data = models.DateTimeField(auto_now_add=True)
+    logo = models.ForeignKey(Logo, on_delete=models.SET_NULL, null=True, blank=True)
 
     def __str__(self):
         return f'{self.tipo}/{self.categoria}: {self.valor}'

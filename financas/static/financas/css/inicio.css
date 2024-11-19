@@ -1,8 +1,10 @@
-
+/* Base styles */
 .conteudo {
   max-width: 1150px;
   margin: auto;
   padding: 20px 10px;
+  width: 100%;
+  box-sizing: border-box;
 }
 
 .conteudo-atualz {
@@ -29,10 +31,14 @@
   justify-content: space-between;
   align-items: center;
   padding: 10px;
+  flex-wrap: wrap;
+  gap: 20px;
 }
 
 .receita, .despesas {
   padding: 10px;
+  flex: 1;
+  min-width: 200px;
 }
 
 .receita > div:first-child,
@@ -46,6 +52,7 @@
 .despesa-usuario {
   color: #212121;
   font-size: 30px;
+  word-break: break-word;
 }
 
 .botao-ver-balanco {
@@ -53,6 +60,7 @@
   align-items: center;
   gap: 15px;
   cursor: pointer;
+  padding: 10px;
 }
 
 .ola-usuario {
@@ -73,6 +81,7 @@
   gap: 5px;
   margin-bottom: 15px;
   padding: 10px;
+  flex-wrap: wrap;
 }
 
 .frame-icon {
@@ -83,11 +92,13 @@
   display: flex;
   justify-content: center;
   align-items: center;
+  flex-shrink: 0;
 }
 
 .transacao-info {
   flex: 1;
   padding: 10px;
+  min-width: 200px;
 }
 
 .transacao-nome {
@@ -104,4 +115,87 @@
 .transacao-valor {
   color: #AC2323;
   font-size: 17px;
+}
+
+/* Media Queries */
+@media screen and (max-width: 768px) {
+  .conteudo {
+    padding: 15px 5px;
+  }
+
+  .conteudo-atualz {
+    height: auto;
+    min-height: 348px;
+  }
+
+  .fundo {
+    border-radius: 25px;
+  }
+
+  .conteudo-extrato {
+    position: relative;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    padding: 20px;
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .ola-usuario {
+    position: relative;
+    left: 20px;
+    top: 20px;
+    font-size: 28px;
+    margin-bottom: 30px;
+  }
+
+  .receita-usuario,
+  .despesa-usuario {
+    font-size: 24px;
+  }
+}
+
+@media screen and (max-width: 480px) {
+  .conteudo-atualz {
+    margin-bottom: 10px;
+  }
+
+  .ola-usuario {
+    font-size: 24px;
+    left: 15px;
+    margin-bottom: 20px;
+  }
+
+  .receita, .despesas {
+    width: 100%;
+    min-width: unset;
+    padding: 5px;
+  }
+
+  .item-tabela {
+    padding: 5px;
+  }
+
+  .transacao-info {
+    min-width: unset;
+    padding: 5px;
+  }
+
+  .frame-icon {
+    width: 35px;
+    height: 35px;
+  }
+
+  .transacao-nome {
+    font-size: 14px;
+  }
+
+  .transacao-data {
+    font-size: 12px;
+  }
+
+  .transacao-valor {
+    font-size: 15px;
+  }
 }

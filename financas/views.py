@@ -1,13 +1,20 @@
 from django.contrib.auth.forms import UserCreationForm
+from django.core.files.base import ContentFile
 from django.contrib import messages
 from django.shortcuts import render, redirect,  get_object_or_404
 from django.http import JsonResponse
 from django.utils import timezone
 from django.http import JsonResponse
-from .models import Transacao, Categoria, DespesaPlanejada, Pagamento, Meta, Limites , Subcategoria, Cartao, Conta, Banco
+from .models import Transacao, Categoria, DespesaPlanejada, Pagamento, Meta, Limites , Subcategoria, Cartao, Conta, Banco, Logo
 from .forms import TransacaoForm, PagamentoForm, CategoriaForm, SubcategoriaForm, CartaoForm, TransacaoCartaoForm, ContaForm, BancoForm
 import json
+import joblib
+import requests
 from datetime import datetime, timedelta
+
+
+modelo_ml = joblib.load('ml_model.pkl')
+
 
 def registrar(request):
     if request.method == 'POST':
@@ -25,6 +32,29 @@ def inicio_view(request):
     return render(request, 'financas/inicio.html', {'transacoes': transacoes})
 
 
+def obter_logo_via_api(marca_nome):
+    """
+    Função para buscar o logo via API da Clearbit usando o nome da marca.
+    """
+    dominio = marca_nome.lower() + ".com"
+    url_logo = f"https://logo.clearbit.com/{dominio}"
+    
+    try:
+        response = requests.get(url_logo)
+        response.raise_for_status()
+
+        logo, criado = Logo.objects.get_or_create(nome=marca_nome)
+        
+        if criado:
+            logo.imagem.save(f"{marca_nome}.png", ContentFile(response.content), save=True)
+            print(f"Logo para {marca_nome} adicionado com sucesso via API.")
+        
+        return logo
+
+    except requests.exceptions.RequestException as e:
+        print(f"Erro ao obter o logo para {marca_nome}: {e}")
+        return None
+
 def transacoes_view(request):
     transacoes = Transacao.objects.all()
 
@@ -32,6 +62,19 @@ def transacoes_view(request):
         form = TransacaoForm(request.POST)
         if form.is_valid():
             transacao = form.save(commit=False)
+
+            # Usar o modelo de ML para prever a marca com base no título da transação
+            marca_prevista = modelo_ml.predict([transacao.titulo])[0]
+            
+            # Buscar o logo no banco de dados ou via API se não existir
+            logo = Logo.objects.filter(nome__iexact=marca_prevista).first()
+            if not logo:
+                logo = obter_logo_via_api(marca_prevista)
+
+            # Associar o logo previsto à transação
+            if logo:
+                transacao.logo = logo
+
             transacao.save()
             messages.success(request, 'Transação adicionada com sucesso.')
             return redirect('transacoes')
@@ -46,7 +89,21 @@ def nova_transacao(request):
     if request.method == 'POST':
         form = TransacaoForm(request.POST)
         if form.is_valid():
-            form.save()
+            transacao = form.save(commit=False)
+            
+            # Usar o modelo de ML para prever a marca com base no título da transação
+            marca_prevista = modelo_ml.predict([transacao.titulo])[0]
+            
+            # Buscar o logo diretamente via API, se não existir no banco
+            logo = Logo.objects.filter(nome__iexact=marca_prevista).first()
+            if not logo:
+                logo = obter_logo_via_api(marca_prevista)
+            
+            # Associar o logo previsto à transação
+            if logo:
+                transacao.logo = logo
+
+            transacao.save()
             messages.success(request, 'Transação adicionada com sucesso.')
             return redirect('transacoes')
         else:
@@ -55,7 +112,6 @@ def nova_transacao(request):
         form = TransacaoForm()
 
     return render(request, 'financas/nova_transacao.html', {'form': form})
-
 
 def relatorios_view(request):
     return render(request, 'financas/relatorios.html')
