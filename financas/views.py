@@ -1,13 +1,20 @@
 from django.contrib.auth.forms import UserCreationForm
+from django.core.files.base import ContentFile
 from django.contrib import messages
 from django.shortcuts import render, redirect,  get_object_or_404
 from django.http import JsonResponse
 from django.utils import timezone
 from django.http import JsonResponse
-from .models import Transacao, Categoria, DespesaPlanejada, Pagamento, Meta, Limites , Subcategoria, Cartao
-from .forms import TransacaoForm, PagamentoForm, CategoriaForm, SubcategoriaForm, CartaoForm, TransacaoCartaoForm
+from .models import Transacao, Categoria, DespesaPlanejada, Pagamento, Meta, Limites , Subcategoria, Cartao, Conta, Banco, Logo
+from .forms import TransacaoForm, PagamentoForm, CategoriaForm, SubcategoriaForm, CartaoForm, TransacaoCartaoForm, ContaForm, BancoForm
 import json
+import joblib
+import requests
 from datetime import datetime, timedelta
+
+
+modelo_ml = joblib.load('ml_model.pkl')
+
 
 def registrar(request):
     if request.method == 'POST':
@@ -25,6 +32,29 @@ def inicio_view(request):
     return render(request, 'financas/inicio.html', {'transacoes': transacoes})
 
 
+def obter_logo_via_api(marca_nome):
+    """
+    Função para buscar o logo via API da Clearbit usando o nome da marca.
+    """
+    dominio = marca_nome.lower() + ".com"
+    url_logo = f"https://logo.clearbit.com/{dominio}"
+    
+    try:
+        response = requests.get(url_logo)
+        response.raise_for_status()
+
+        logo, criado = Logo.objects.get_or_create(nome=marca_nome)
+        
+        if criado:
+            logo.imagem.save(f"{marca_nome}.png", ContentFile(response.content), save=True)
+            print(f"Logo para {marca_nome} adicionado com sucesso via API.")
+        
+        return logo
+
+    except requests.exceptions.RequestException as e:
+        print(f"Erro ao obter o logo para {marca_nome}: {e}")
+        return None
+
 def transacoes_view(request):
     transacoes = Transacao.objects.all()
 
@@ -32,6 +62,19 @@ def transacoes_view(request):
         form = TransacaoForm(request.POST)
         if form.is_valid():
             transacao = form.save(commit=False)
+
+            # Usar o modelo de ML para prever a marca com base no título da transação
+            marca_prevista = modelo_ml.predict([transacao.titulo])[0]
+            
+            # Buscar o logo no banco de dados ou via API se não existir
+            logo = Logo.objects.filter(nome__iexact=marca_prevista).first()
+            if not logo:
+                logo = obter_logo_via_api(marca_prevista)
+
+            # Associar o logo previsto à transação
+            if logo:
+                transacao.logo = logo
+
             transacao.save()
             messages.success(request, 'Transação adicionada com sucesso.')
             return redirect('transacoes')
@@ -46,7 +89,21 @@ def nova_transacao(request):
     if request.method == 'POST':
         form = TransacaoForm(request.POST)
         if form.is_valid():
-            form.save()
+            transacao = form.save(commit=False)
+            
+            # Usar o modelo de ML para prever a marca com base no título da transação
+            marca_prevista = modelo_ml.predict([transacao.titulo])[0]
+            
+            # Buscar o logo diretamente via API, se não existir no banco
+            logo = Logo.objects.filter(nome__iexact=marca_prevista).first()
+            if not logo:
+                logo = obter_logo_via_api(marca_prevista)
+            
+            # Associar o logo previsto à transação
+            if logo:
+                transacao.logo = logo
+
+            transacao.save()
             messages.success(request, 'Transação adicionada com sucesso.')
             return redirect('transacoes')
         else:
@@ -55,7 +112,6 @@ def nova_transacao(request):
         form = TransacaoForm()
 
     return render(request, 'financas/nova_transacao.html', {'form': form})
-
 
 def relatorios_view(request):
     return render(request, 'financas/relatorios.html')
@@ -183,67 +239,116 @@ def plano_de_gastos_view(request):
     return render(request, 'financas/plano_de_gastos.html', context)
 
 
-def minhas_contas(request):
-    return render(request, 'financas/minhas_contas.html')
-
-def meus_cartoes(request):
-    return render(request, 'financas/meus_cartoes.html')
-
-
-def lista_cartoes(request):
+def carteira_views(request):
+    contas = Conta.objects.all()  
+    bancos = Banco.objects.all()  
     cartoes = Cartao.objects.all()
-    form = CartaoForm()
-    return render(request, 'financas/lista_cartoes.html', {
-        'cartoes': cartoes,
-        'form': form
-    })
+    
+    # Formulários
+    banco_form = BancoForm()
+    conta_form = ContaForm()
+    cartao_form = CartaoForm()
+    transacao_form = TransacaoCartaoForm()
 
-
-def adicionar_cartao(request):
+    # Tratamento de diferentes formulários
     if request.method == 'POST':
-        form = CartaoForm(request.POST)
-        if form.is_valid():
-            form.save()
-            return redirect('lista_cartoes')
-    return redirect('lista_cartoes')
+        if 'adicionar_banco' in request.POST:  # Identifica qual formulário foi enviado
+            banco_form = BancoForm(request.POST, request.FILES)
+            if banco_form.is_valid():
+                banco_form.save()
+                messages.success(request, 'Banco adicionado com sucesso!')
+                return redirect('meus_cartoes')
+
+        elif 'adicionar_conta' in request.POST:
+            conta_form = ContaForm(request.POST)
+            if conta_form.is_valid():
+                conta = conta_form.save(commit=False)
+                conta.usuario = request.user
+                conta.save()
+                messages.success(request, 'Conta criada com sucesso!')
+                return redirect('meus_cartoes')
+
+        elif 'adicionar_cartao' in request.POST:
+            cartao_form = CartaoForm(request.POST)
+            if cartao_form.is_valid():
+                cartao = cartao_form.save(commit=False)
+                cartao.usuario = request.user
+                cartao.save()
+                messages.success(request, 'Cartão adicionado com sucesso!')
+                return redirect('meus_cartoes')
+
+        elif 'adicionar_transacao' in request.POST:
+            transacao_form = TransacaoCartaoForm(request.POST)
+            if transacao_form.is_valid():
+                transacao = transacao_form.save(commit=False)
+                transacao.cartao_id = request.POST.get('cartao_id')  # Recebe o ID do cartão do formulário
+                transacao.save()
+                messages.success(request, 'Transação adicionada com sucesso!')
+                return redirect('meus_cartoes')
+
+    context = {
+        'contas': contas,
+        'bancos': bancos,
+        'cartoes': cartoes,
+        'banco_form': banco_form,
+        'conta_form': conta_form,
+        'cartao_form': cartao_form,
+        'transacao_form': transacao_form
+    }
+
+    return render(request, 'financas/meus_cartoes.html', context)
 
 
 def pagar_fatura(request, cartao_id):
+    """View para realizar o pagamento de uma fatura."""
+    cartao = get_object_or_404(Cartao, id=cartao_id)  # Remove a verificação de usuário.
+
     if request.method == 'POST':
-        cartao = Cartao.objects.get(id=cartao_id)
-        cartao.status = 'FECHADA'
+        # Lógica de pagamento
+        cartao.saldo -= cartao.valor_fatura  # Exemplo: subtraindo o valor da fatura do saldo
+        cartao.valor_fatura = 0  # Zera a fatura após o pagamento
         cartao.save()
-        return JsonResponse({'status': 'success'})
-    return JsonResponse({'status': 'error'}, status=400)
+
+        messages.success(request, 'Fatura paga com sucesso!')
+        return JsonResponse({'status': 'success', 'message': 'Fatura paga com sucesso!'})
+
+    return JsonResponse({'status': 'error', 'message': 'Método não permitido.'}, status=405)
 
 
-def transacoesCartao(request, cartao_id):
-    cartao = Cartao.objects.get(id=cartao_id)
-    transacoes = cartao.transacao_set.all()
-    
+def transacoes_cartao(request, cartao_id):
+    """View para listar e gerenciar transações de um cartão."""
+    cartao = get_object_or_404(Cartao, id=cartao_id)  # Remove a verificação de usuário.
+    transacoes = cartao.transacoes_cartao.all()  # `related_name` do relacionamento entre cartão e transações.
+
+    # Filtros de data
     data_inicial = request.GET.get('data_inicial')
     data_final = request.GET.get('data_final')
-    
+
     if data_inicial and data_final:
         transacoes = transacoes.filter(data__range=[data_inicial, data_final])
-    
-    form = TransacaoCartaoForm()
-    
-    return render(request, 'cartoes/transacoes.html', {
+
+    transacao_form = TransacaoCartaoForm()
+
+    if request.method == 'POST':
+        transacao_form = TransacaoCartaoForm(request.POST)
+        if transacao_form.is_valid():
+            transacao = transacao_form.save(commit=False)
+            transacao.cartao = cartao
+            transacao.save()
+
+            messages.success(request, 'Transação adicionada com sucesso!')
+            return redirect('transacoes_cartao', cartao_id=cartao.id)
+        else:
+            messages.error(request, 'Erro ao adicionar transação. Verifique os dados.')
+
+    context = {
         'cartao': cartao,
         'transacoes': transacoes,
-        'form': form
-    })
+        'transacao_form': transacao_form,
+    }
 
-def adicionar_transacao(request, cartao_id):
-    if request.method == 'POST':
-        form = TransacaoCartaoForm(request.POST)
-        if form.is_valid():
-            transacao = form.save(commit=False)
-            transacao.cartao_id = cartao_id
-            transacao.save()
-            return redirect('transacoes', cartao_id=cartao_id)
-    return redirect('transacoes', cartao_id=cartao_id)
+    return render(request, 'financas/transacoes_cartao.html', context)
+
 
 def meus_limites(request):
     return render(request, 'financas/meus_limites.html')

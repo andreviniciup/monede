@@ -1,112 +1,233 @@
-:root {
-    --cor-primaria: #00bd6f;
-    --cor-texto: #333;
-    --cor-fundo: #f5f5f5;
-    --cor-borda: #ddd;
+/* Main Layout */
+.dashboard-container {
+ /* Account for sidebar */
+    padding: 32px;
+    background-color: #F8F8F8;
+    min-height: 100vh;
 }
 
-* {
-    margin: 0;
-    padding: 0;
-    box-sizing: border-box;
-}
-
-body {
-    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
-    background-color: var(--cor-fundo);
-    color: var(--cor-texto);
-    line-height: 1.6;
-}
-
-.cabecalho {
-    background: white;
-    padding: 1rem;
-    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
-}
-
-.navegacao {
+.content-wrapper {
     max-width: 1200px;
     margin: 0 auto;
+}
+
+/* Section Headers */
+.section-header {
     display: flex;
     justify-content: space-between;
     align-items: center;
+    margin-bottom: 24px;
 }
 
-.navegacao a {
-    color: var(--cor-texto);
-    text-decoration: none;
-    font-weight: 500;
-}
-
-.conteudo {
-    max-width: 1200px;
-    margin: 2rem auto;
-    padding: 0 1rem;
-}
-
-.cartoes-header {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    margin-bottom: 2rem;
-}
-
-.btn-adicionar {
-    background: var(--cor-primaria);
-    color: white;
-    border: none;
-    padding: 0.5rem 1rem;
-    border-radius: 4px;
-    cursor: pointer;
-    font-weight: 500;
-}
-
-.cartoes-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
-    gap: 1.5rem;
-}
-
-.cartao-card {
-    background: white;
-    border-radius: 8px;
-    padding: 1.5rem;
-    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
-}
-
-.cartao-header img {
-    height: 40px;
-}
-
-.cartao-info {
-    margin: 1rem 0;
-}
-
-.valor-fatura {
-    font-size: 1.5rem;
+.section-title {
+    font-size: 24px;
+    color: #1A1A1A;
+    margin: 0;
     font-weight: 600;
-    margin: 0.5rem 0;
 }
 
-.status {
-    display: inline-block;
-    padding: 0.25rem 0.5rem;
-    background: #e0e0e0;
-    border-radius: 4px;
-    font-size: 0.875rem;
-}
-
-.btn-pagar {
-    background: var(--cor-primaria);
+.add-button {
+    background-color: #3F9DAC;
     color: white;
     border: none;
-    padding: 0.5rem 1rem;
-    border-radius: 4px;
+    padding: 12px 24px;
+    border-radius: 8px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
     cursor: pointer;
-    width: 100%;
-    margin-top: 1rem;
+    font-size: 14px;
+    font-weight: 600;
+    transition: background-color 0.2s;
 }
 
+.add-button:hover {
+    background-color: #358a98;
+}
+
+.add-icon {
+    font-size: 18px;
+    font-weight: bold;
+}
+
+/* Cards Grid */
+.cards-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(400px, 1fr));
+    gap: 24px;
+    margin-bottom: 48px;
+}
+
+/* Credit Card Style */
+.credit-card {
+    width: 450px;
+    height: 180px;
+    background-color: white;
+    border-radius: 16px;
+    padding: 24px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+.card-header {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    margin-bottom: 24px;
+}
+
+.card-logo {
+    width: 48px;
+    height: 48px;
+    position: relative;
+}
+
+.mastercard-circles {
+    width: 100%;
+    height: 100%;
+    position: relative;
+}
+
+.circle {
+    width: 30px;
+    height: 30px;
+    border-radius: 50%;
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+}
+
+.circle-red {
+    background-color: #EB001B;
+    left: 0;
+    z-index: 1;
+}
+
+.circle-orange {
+    background-color: #F79E1B;
+    right: 0;
+    mix-blend-mode: multiply;
+}
+
+.card-info {
+    flex-grow: 1;
+}
+
+.card-name {
+    font-size: 20px;
+    color: #E3484A;
+    margin: 0 0 4px 0;
+    font-weight: 600;
+}
+
+.card-date {
+    font-size: 14px;
+    color: #666;
+    margin: 0;
+}
+
+.card-amount {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-top: 16px;
+}
+
+.amount-info {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+}
+
+.amount-value {
+    font-size: 24px;
+    color: #1A1A1A;
+    font-weight: 600;
+    margin: 0;
+}
+
+.amount-status {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    color: #5D9953;
+    font-size: 14px;
+}
+
+.status-dot {
+    width: 6px;
+    height: 6px;
+    background-color: #5D9953;
+    border-radius: 50%;
+}
+
+.view-transactions {
+    padding: 8px 16px;
+    border: 1px solid #E5E5E5;
+    border-radius: 8px;
+    background: none;
+    color: #666;
+    cursor: pointer;
+    font-size: 14px;
+    transition: all 0.2s;
+}
+
+.view-transactions:hover {
+    background-color: #f5f5f5;
+}
+
+/* Bank Account Style */
+.bank-account {
+    background-color: white;
+    border-radius: 16px;
+    padding: 24px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+.bank-header {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+}
+
+.bank-logo {
+    width: 40px;
+    height: 40px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.bank-logo img {
+    max-width: 100%;
+    max-height: 100%;
+    object-fit: contain;
+}
+
+.bank-info {
+    flex-grow: 1;
+}
+
+.bank-name {
+    font-size: 18px;
+    color: #1A1A1A;
+    margin: 0 0 4px 0;
+    font-weight: 600;
+}
+
+.bank-balance {
+    color: #666;
+    font-size: 14px;
+    margin: 0 0 4px 0;
+}
+
+.bank-amount {
+    font-size: 20px;
+    color: #1A1A1A;
+    font-weight: 600;
+    margin: 0;
+}
+
+/* Modal Styles */
 .modal {
     display: none;
     position: fixed;
@@ -114,31 +235,93 @@ body {
     left: 0;
     width: 100%;
     height: 100%;
-    background: rgba(0,0,0,0.5);
+    background-color: rgba(0, 0, 0, 0.5);
+    z-index: 1000;
 }
 
-.modal-conteudo {
-    background: white;
-    padding: 2rem;
+.modal-content {
+    background-color: white;
+    border-radius: 16px;
+    padding: 24px;
+    width: 90%;
+    max-width: 480px;
+    margin: 10% auto;
+    position: relative;
+}
+
+.modal-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 24px;
+}
+
+.modal-header h2 {
+    font-size: 20px;
+    color: #1A1A1A;
+    margin: 0;
+    font-weight: 600;
+}
+
+.close-button {
+    background: none;
+    border: none;
+    font-size: 24px;
+    color: #666;
+    cursor: pointer;
+    padding: 0;
+}
+
+.form-group {
+    margin-bottom: 20px;
+}
+
+.form-group label {
+    display: block;
+    font-size: 14px;
+    color: #1A1A1A;
+    margin-bottom: 8px;
+}
+
+.form-input {
+    width: 100%;
+    padding: 12px;
+    border: 1px solid #E5E5E5;
     border-radius: 8px;
-    max-width: 500px;
-    margin: 2rem auto;
+    font-size: 14px;
 }
 
-.modal-acoes {
+.currency-input {
+    display: flex;
+    align-items: center;
+    border: 1px solid #E5E5E5;
+    border-radius: 8px;
+    overflow: hidden;
+}
+
+.currency-prefix {
+    padding: 12px;
+    background-color: #F8F8F8;
+    color: #666;
+    border-right: 1px solid #E5E5E5;
+}
+
+.currency-input .form-input {
+    border: none;
+    flex: 1;
+}
+
+.modal-actions {
     display: flex;
     justify-content: flex-end;
-    gap: 1rem;
-    margin-top: 1rem;
+    gap: 12px;
+    margin-top: 24px;
 }
 
-/* Responsividade */
-@media (max-width: 768px) {
-    .cartoes-grid {
-        grid-template-columns: 1fr;
-    }
-    
-    .modal-conteudo {
-        margin: 1rem;
-    }
+.cancel-button {
+    padding: 12px 24px;
+    background: none;
+    border: 1px solid #E5E5E5;
+    border-radius: 8px;
+    color: #666;
 }
