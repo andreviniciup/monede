@@ -106,36 +106,37 @@ class FinancialAnalyzer:
         try:
             projections = {}
             confidence_intervals = {}
-            
+        
             # Agrupa por categoria
             for categoria in queryset.values_list('categoria', flat=True).distinct():
                 cat_transactions = queryset.filter(categoria=categoria).order_by('data')
                 values = [float(v) for v in cat_transactions.values_list('valor', flat=True)]
-                
-                if len(values) < 4:  # É preciso de pelo menos 4 pontos para uma projeção confiável
+            
+                if len(values) < 4:  # Precisa de pelo menos 4 pontos para projeção
                     continue
-                
+            
                 # Prepara dados para projeção
                 data = np.array(values)
                 x = np.arange(len(data))
-                
+            
                 # Calcula tendência linear
                 z = np.polyfit(x, data, 1)
                 slope, intercept = z[0], z[1]
-                
+            
                 # Projeta valores futuros
                 future_x = np.arange(len(data), len(data) + months_ahead)
                 projected = slope * future_x + intercept
-                
+            
                 # Calcula intervalo de confiança
                 std_dev = np.std(data - (slope * x + intercept))
                 confidence = 1.96 * std_dev  # 95% de confiança
-                
+            
+                # Armazena usando o ID da categoria como inteiro
                 projections[categoria] = projected.tolist()
                 confidence_intervals[categoria] = [
                     (v - confidence, v + confidence) for v in projected
                 ]
-            
+        
             return projections, confidence_intervals
         except Exception as e:
             raise ValueError(f"Erro na projeção de valores: {str(e)}")
@@ -197,27 +198,27 @@ class FinancialAnalyzer:
         """
         try:
             status = {}
-            
+        
             for categoria in categoria_queryset:
-                # Pega total de despesas da categoria
+                # Pega total de despesas da categoria usando o ID
                 total_despesas = transacao_queryset.filter(
-                    categoria=categoria.nome,
+                    categoria=categoria,  # Usa o objeto categoria em vez do nome
                     tipo='DESPESA'
                 ).aggregate(total=Sum('valor'))['total'] or Decimal('0')
-                
+            
                 # Calcula percentual do orçamento utilizado
                 if categoria.orcamento > 0:
                     percentual_usado = (total_despesas / categoria.orcamento) * 100
                 else:
                     percentual_usado = 0
-                
+            
                 status[categoria.nome] = {
                     'orcamento': float(categoria.orcamento),
                     'gasto': float(total_despesas),
                     'percentual_usado': round(float(percentual_usado), 1),
                     'disponivel': float(categoria.orcamento - total_despesas)
                 }
-            
+        
             return status
         except Exception as e:
             raise ValueError(f"Erro na análise do orçamento: {str(e)}")
