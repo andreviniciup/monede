@@ -21,7 +21,7 @@ class Categoria(models.Model):
     cor = models.CharField(max_length=7, default='#FFFFFF')
     orcamento = models.DecimalField(max_digits=10, decimal_places=2, default=0)
     valor_total = models.DecimalField(max_digits=10, decimal_places=2, default=0)
-    icone = models.CharField(max_length=50, default='default_icon')  # Ajustado o default para uma string
+    icone = models.CharField(max_length=255,default='icons/categorias/default.svg')
     padrao = models.BooleanField(default=False)
 
     class Meta:
@@ -231,8 +231,14 @@ class TransacaoCartao(models.Model):
     
 
 class Banco(models.Model):
-    nome = models.CharField(max_length=100)
-    icone = models.ImageField(upload_to='bancos/')
+    codigo = models.CharField(max_length=10, unique=True)
+    nome_completo = models.CharField(max_length=100)
+    nome = models.CharField(max_length=50)
+    logo = models.ImageField(upload_to='logos_bancos/', blank=True, null=True)
+    cor = models.CharField(max_length=7, blank=True, null=True)
+
+    def __str__(self):
+        return self.nome
 
 class Conta(models.Model):
     usuario = models.ForeignKey(User, on_delete=models.CASCADE)

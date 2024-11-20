@@ -20,7 +20,24 @@
 
     <div class="frame-210">
       <div class="frame-209">
-        {% include 'components/calendarioMes.html' %}
+        <div class="botao-filtros">
+          <select class "botao-filtros" id="timeRange" onchange="updateTimeRange(this.value)">
+            <option value="7">Últimos 7 dias</option>
+            <option value="15">Últimos 15 dias</option>
+            <option value="30">Últimos 30 dias</option>
+        </select>
+        </div>
+
+        <form method="get" action="{% url 'transacoes' %}">
+          <label for="data_inicial">Data Inicial:</label>
+          <input type="date" name="data_inicial" id="data_inicial" value="{{ data_inicial }}">
+        
+          <label for="data_final">Data Final:</label>
+          <input type="date" name="data_final" id="data_final" value="{{ data_final }}">
+        
+          <button type="submit">Filtrar</button>
+        </form>
+        
         <div class="barra-pesquisa">
           <img src="{% static 'icons/search-icon.svg' %}" class="vector-pesquisa" alt="Ícone de pesquisa">
           <input type="text" class="input-pesquisa"  id="search-transactions"  placeholder="Pesquisar transações">
@@ -60,19 +77,21 @@
               <td class="tipo {% if transacao.tipo == 'DESPESA' %}despesa{% else %}receita{% endif %}">{{ transacao.tipo }}</td>
               <td class="banco {% if transacao.banco == 'Nubank' %}nubank{% elif transacao.banco == 'Itaú' %}itau{% endif %}">{{ transacao.banco }}</td>
               <td>
-                <div class="categoria {% if transacao.categoria == 'Compras' %}compras{% elif transacao.categoria == 'Transporte' %}transporte{% endif %}">
-                  <img src="{% static 'icons/categoria-icon.svg' %}" alt="Ícone de categoria">
+                <div class="categoria" style="background-color: {{ transacao.categoria.cor|default:'#ccc' }}">
+                  <!-- <img src="{% static transacao.icone %}" alt="{{ transacao.titulo }}">-->
                   {{ transacao.categoria }}
-                </div>
+              </div>
               </td>
               <td class="actions">
-                <div class="dots">
-                  <span></span>
-                  <span></span>
-                  <span></span>
+                <div class="dots" onclick="toggleMenu(this)">
+                    <span></span>
+                    <span></span>
+                    <span></span>
                 </div>
-                <a href="#" class="editar-transacao">Editar</a>
-                <a href="#" class="excluir-transacao">Excluir</a>
+                <div class="menu">
+                    <a href="#" class="editar-transacao">Editar</a>
+                    <a href="#" class="excluir-transacao">Excluir</a>
+                </div>
               </td>
             </tr>
           {% endfor %}
@@ -112,10 +131,10 @@
             <div class="grupo-form">
                 <label for="data_transacao">Data da transação*</label>
                 <div class="input-data">
-                    <input type="checkbox" id="data_automatica" name="data_automatica" onchange="toggleDataManual(this)">
-                    <label for="data_automatica">Definir data automaticamente</label>
-                    <input type="date" id="data_transacao" name="data" class="input-padrao" required>
-                </div>
+                  <input type="checkbox" id="data_automatica" name="data_automatica" onchange="toggleDataManual(this)">
+                  <label for="data_automatica">Definir data automaticamente</label>
+                  <input type="date" id="data_transacao" name="data" class="input-padrao" required>
+              </div>
             </div>
             
             <!-- Campo Categoria -->
@@ -129,15 +148,34 @@
                 </select>
             </div>
 
-            <!-- Campo Conta -->
             <div class="grupo-form">
-                <label for="conta">Conta</label>
-                <select id="conta" name="conta" class="input-padrao">
-                    <option value="">Selecionar conta</option>
-                    {% for conta in contas %}
-                    <option value="{{ conta.id }}">{{ conta.nome }}</option>
-                    {% endfor %}
-                </select>
+              <label for="tipo-conta-cartao">Tipo</label>
+              <select id="tipo-conta-cartao" name="tipo_conta_cartao" class="input-padrao" onchange="atualizarOpcoesContaCartao()">
+                  <option value="">Selecionar tipo</option>
+                  <option value="CONTA">Conta</option>
+                  <option value="CARTAO">Cartão</option>
+              </select>
+            </div>
+            
+            <!-- Campo para selecionar Conta ou Cartão -->
+            <div class="grupo-form" id="grupo-conta" style="display: none;">
+              <label for="conta">Conta</label>
+              <select id="conta" name="conta" class="input-padrao">
+                  <option value="">Selecionar conta</option>
+                  {% for conta in contas %}
+                  <option value="{{ conta.id }}">{{ conta.nome }}</option>
+                  {% endfor %}
+              </select>
+            </div>
+            
+            <div class="grupo-form" id="grupo-cartao" style="display: none;">
+              <label for="cartao">Cartão</label>
+              <select id="cartao" name="cartao" class="input-padrao">
+                  <option value="">Selecionar cartão</option>
+                  {% for cartao in cartoes %}
+                  <option value="{{ cartao.id }}">{{ cartao.nome }}</option>
+                  {% endfor %}
+              </select>
             </div>
 
              <!-- Campo Tipo -->

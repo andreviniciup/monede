@@ -12,32 +12,55 @@
         <div class="cabecalho">
             <h1 class="titulo-pagina">Minhas Metas</h1>
             <button class="botao-adicionar-meta" onclick="abrirModalMeta()">
-                <span class="icone-adicionar">+</span>
-                Adicionar Nova Meta
+                <img src="{% static 'icons/addTransação-Vector.svg' %}" class="vector" alt="Ícone">
+                <span class="adicionar-transacao">Adicionar Transação</span>
             </button>
         </div>
         
         <div class="grade-metas">
             {% for meta in metas %}
-            <div class="cartao-meta">
-                <div class="imagem-cartao" {% if meta.imagem %}style="background-image: url('{{ meta.imagem.url }}')"{% endif %}>
-                    <div class="sobreposicao-imagem sobreposicao-{{ meta.categoria.cor|default:'padrao' }}"></div>
-                </div>
-                <div class="conteudo-cartao">
-                    <div class="detalhes-meta">
-                        <span class="tag-categoria {{ meta.categoria.cor|default:'padrao' }}">
-                            {{ meta.categoria.nome|default:"Sem categoria" }}
-                        </span>
-                        <h3 class="titulo-meta">{{ meta.titulo }}</h3>
-                        <div class="valores-meta">
-                            <span class="valor-atual">R$ {{ meta.valor_atual|floatformat:2 }}</span>
-                            <span class="valor-meta">R$ {{ meta.valor_meta|floatformat:2 }}</span>
+            <div class="cartao-meta-botao">
+                <div class="cartao-meta">
+                    <div class="imagem-cartao" {% if meta.imagem %}style="background-image: url('{{ meta.imagem.url }}')"{% endif %}>
+                        <div class="sobreposicao-imagem sobreposicao-{{ meta.categoria.cor|default:'padrao' }}"></div>
+                    </div>
+                    <div class="conteudo-cartao">
+                        <div class="detalhes-meta">
+                            <div class="detalhes-meta-2">
+                                <span class="tag-categoria" style="background-color: {{ meta.categoria.cor|default:'#ccc' }}">
+                                    {{ meta.categoria.nome|default:"Sem categoria" }}
+                                </span>
+                            </div>
+                            <div class = "principal">  
+                                <h3 class="titulo-meta">{{ meta.titulo }}</h3>
+                                <div class="actions">
+                                    <div class="dots" onclick="toggleMenu(this)">
+                                        <span></span>
+                                        <span></span>
+                                        <span></span>
+                                    </div>
+                                    <div class="menu">
+                                        <a href="#" class="editar-transacao">Editar</a>
+                                        <a href="#" class="excluir-transacao">Excluir</a>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="valores-meta">
+                                <span class="valor-atual">R$ {{ meta.valor_atual|floatformat:2 }}</span>
+                                <span class="valor-meta">R$ {{ meta.valor_meta|floatformat:2 }}</span>
+                            </div>
+                        </div>
+                        <div class="barra-progresso">
+                            <div class="progresso" style="width: {{ meta.porcentagem_concluida }}%"></div>
                         </div>
                     </div>
-                    <div class="barra-progresso">
-                        <div class="progresso" style="width: {{ meta.porcentagem_concluida }}%"></div>
-                    </div>
                 </div>
+                <div class="botao-baixo">
+                    <span class="adicionar-valor-text">Insira um valor na sua meta</span>
+                    <button class="botao_add_valor" data-meta-id="{{ meta.id }}" onclick="abrirModalValorMeta(this)">
+                      <span class="adicionar-valor">Adicionar Valor</span>
+                    </button>
+                  </div>
             </div>
             {% endfor %}
         </div>
@@ -93,4 +116,26 @@
         </form>
     </div>
 </div>
+
+<div id="modal-valor-meta" class="modal" style="display: none;">
+    <div class="conteudo-modal">
+      <div class="cabecalho-modal">
+        <h2>Adicionar valor à sua meta</h2>
+        <button class="fechar-modal" onclick="fecharModalValorMeta()">X</button>
+      </div>
+      <form id="form-valor-meta">
+        {% csrf_token %}
+        <div class="grupo-form">
+          <label for="valor_meta">Valor da meta*</label>
+          <div class="input-valor">
+            <span class="prefixo-valor">R$</span>
+            <input type="number" id="valor_meta" name="valor_meta" step="0.01" required class="input-padrao" placeholder="0,00">
+          </div>
+        </div>
+        <button type="submit" class="botao-criar">Atualizar Meta</button>
+      </form>
+    </div>
+  </div>
+
+  
 {% endblock %}

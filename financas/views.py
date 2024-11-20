@@ -1,6 +1,7 @@
 from django.contrib.contenttypes.models import ContentType
 from django.contrib.auth.forms import UserCreationForm
 from django.core.files.base import ContentFile
+from django.views.decorators.csrf import csrf_exempt
 from django.contrib import messages
 from django.shortcuts import render, redirect,  get_object_or_404
 from django.http import JsonResponse
@@ -111,9 +112,29 @@ def buscar_logo_brandfetch(marca_nome):
         print(f"Erro no Brandfetch para {marca_nome}: {e}")
         return None
 
+
 def transacoes_view(request):
     transacoes = Transacao.objects.all()
 
+    # Verifica se ambos os parâmetros de data foram passados pela URL
+    data_inicial = request.GET.get('data_inicial')
+    data_final = request.GET.get('data_final')
+
+    # Filtra as transações apenas quando ambos os campos de data foram selecionados
+    if data_inicial and data_final:
+        try:
+            data_inicial = datetime.strptime(data_inicial, '%Y-%m-%d')
+            data_final = datetime.strptime(data_final, '%Y-%m-%d')
+
+            # Aplica o filtro de data somente se ambas as datas forem válidas
+            if data_inicial <= data_final:
+                transacoes = transacoes.filter(data__gte=data_inicial, data__lte=data_final)
+            else:
+                messages.error(request, 'A data inicial não pode ser maior que a data final.')
+        except ValueError:
+            messages.error(request, 'Uma ou ambas as datas estão no formato inválido.')
+
+    # Processamento do formulário de nova transação
     if request.method == 'POST':
         form = TransacaoForm(request.POST)
         if form.is_valid():
@@ -139,7 +160,13 @@ def transacoes_view(request):
     else:
         form = TransacaoForm()
 
-    return render(request, 'financas/transacoes.html', {'transacoes': transacoes, 'form': form})
+    # Renderiza a página com as transações e o formulário
+    return render(request, 'financas/transacoes.html', {
+        'transacoes': transacoes,
+        'form': form,
+        'data_inicial': data_inicial,
+        'data_final': data_final,
+    })
 
 
 def nova_transacao(request):
@@ -287,6 +314,30 @@ def criar_meta_view(request):
     
     return redirect('metas')
 
+@csrf_exempt  # Para testes locais; em produção, use o middleware CSRF
+def atualizar_meta(request, meta_id):
+    if request.method == 'POST':
+        try:
+            data = json.loads(request.body.decode('utf-8'))  # Decodifica o JSON recebido
+            valor_meta = data.get('valor_meta')  # Obtém o campo 'valor_meta'
+
+            print("Valor recebido no backend:", valor_meta)
+
+
+            if valor_meta is None:  # Validação
+                return JsonResponse({'error': 'O campo valor_meta é obrigatório.'}, status=400)
+
+            meta = Meta.objects.get(id=meta_id)
+            meta.valor_atual += float(valor_meta)  # Atualiza o valor atual
+            meta.save()
+
+            return JsonResponse({'success': True, 'nova_meta': meta.valor_atual})
+        except Meta.DoesNotExist:
+            return JsonResponse({'error': 'Meta não encontrada.'}, status=404)
+        except Exception as e:
+            return JsonResponse({'error': str(e)}, status=500)
+
+    return JsonResponse({'error': 'Método não permitido.'}, status=405)
 
 def pagamentos_lista(request):
     hoje = timezone.now().date()

@@ -61,10 +61,9 @@ class TransacaoCartaoForm(forms.ModelForm):
 class BancoForm(forms.ModelForm):
     class Meta:
         model = Banco
-        fields = ['nome', 'icone']
+        fields = ['nome']
         widgets = {
-            'nome': forms.TextInput(attrs={'class': 'form-control'}),
-            'icone': forms.FileInput(attrs={'class': 'form-control'}),
+            'nome': forms.TextInput(attrs={'class': 'form-control'})
         }
 
 class ContaForm(forms.ModelForm):

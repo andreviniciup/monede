@@ -1,4 +1,10 @@
-/* static/financas/css/metas.css */
+
+.container-metas{
+  max-width: 1150px;
+  margin: auto;
+  padding: 40px 10px;
+}
+
 .modal {
   display: none;
   position: fixed;
@@ -128,40 +134,54 @@
 }
 
 .titulo-pagina {
-  font-size: 24px;
+  font-size: 25px;
   color: #1A1A1A;
   margin: 0;
 }
 
 .botao-adicionar-meta {
-  background-color: #3F9DAC;
-  color: white;
-  border: none;
-  padding: 12px 24px;
-  border-radius: 8px;
+  padding: 7px 10px;
+  background: #3F9DAC;
+  border-radius: 20px;
   display: flex;
   align-items: center;
-  gap: 8px;
+  gap: 5px;
+  border: none;
   cursor: pointer;
+}
+
+
+.botao-add-transacao .vector {
+  width: 12px;
+  height: 12px;
+  border: none;
+}
+
+.adicionar-transacao {
+  color: #D0EAEE;
   font-size: 14px;
-  font-weight: 600;
+  font-family: "Nunito", Arial, sans-serif;
 }
-
-.icone-adicionar {
-  font-size: 20px;
-}
-
 .grade-metas {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
   gap: 24px;
 }
 
+
+
 .cartao-meta {
   background-color: white;
-  border-radius: 12px;
+  border-radius: 12px 12px 0px 0px;
+}
+
+.cartao-meta-botao {
+  position: relative;
+  background-color: #F2F2F2;
   overflow: hidden;
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  border-radius: 12px;
+  
 }
 
 .imagem-cartao {
@@ -194,10 +214,87 @@
   margin-bottom: 12px;
 }
 
+.botao_add_valor {
+  padding: 4px 12px;
+  margin-bottom: 12px;
+  background: #BEBEBE;
+  border-radius: 999px;
+  border: 2px solid #BEBEBE;
+  font-family: "Nunito", Arial, sans-serif;
+  font-weight: 700;
+  font-size: 12px;
+  color: #606060; 
+  margin: 8px 15px 8px 8px;  
+}
+
+
+.adicionar-valor-text{
+  font-size: 12px;
+  color: #a2a2a2; 
+  margin: 8px 8px 8px 15px;
+  
+}
+
 .titulo-meta {
   font-size: 18px;
   color: #1A1A1A;
   margin: 0 0 12px 0;
+}
+
+.botao-baixo{
+  display: flex;
+  align-items: center;
+  justify-content: space-between; 
+}
+.principal {
+  display: flex;
+  align-items: center; 
+  justify-content: space-between; 
+}
+
+
+.actions {
+  position: relative;
+  margin: 0 0 12px 0;
+}
+
+.dots {
+  cursor: pointer;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 3px;
+}
+
+.dots span {
+  display: block;
+  width: 3px;
+  height: 3px;
+  background-color: #7c7c7c;
+  border-radius: 50%;
+}
+
+.menu {
+  display: none;
+  position: absolute;
+  top: 100%;
+  right: 0;
+  background-color: white;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+  border-radius: 4px;
+  overflow: hidden;
+  z-index: 10;
+}
+
+.menu a {
+  display: block;
+  padding: 8px 12px;
+  text-decoration: none;
+  color: #333;
+}
+
+.menu a:hover {
+  background-color: #f0f0f0;
 }
 
 .valores-meta {

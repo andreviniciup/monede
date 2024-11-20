@@ -18,6 +18,7 @@ urlpatterns = [
     # Rota para listagem de metas
     path('metas/', views.lista_metas_view, name='metas'), 
     path('metas/criar/', views.criar_meta_view, name='criar-meta'), 
+    path('metas/atualizar-meta/<int:meta_id>/', views.atualizar_meta, name='atualizar-meta'),
 
     # Página de plano de gastos
     path('plano_de_gastos/', views.plano_de_gastos_view, name='plano_de_gastos'),  
@@ -27,17 +28,17 @@ urlpatterns = [
     path('pagamentos/adicionar/', views.adicionar_pagamento, name='adicionar_pagamento'),
     path('pagamentos/<int:pagamento_id>/processar/', views.processar_pagamento, name='processar_pagamento'),
 
-    path('minhas-contas/', views.carteira_views, name='carteira'),
+    path('carteira/', views.carteira_views, name='carteira'),
 
     # Endpoints para ações específicas
-    path('minhas-contas/banco/adicionar/', views.carteira_views, name='adicionar_banco'),
-    path('minhas-contas/conta/adicionar/', views.carteira_views, name='adicionar_conta'),
-    path('minhas-contas/cartao/adicionar/', views.carteira_views, name='adicionar_cartao'),
-    path('minhas-contas/transacao/adicionar/', views.carteira_views, name='adicionar_transacao'),
+    path('carteira/banco/adicionar/', views.carteira_views, name='adicionar_banco'),
+    path('carteira/conta/adicionar/', views.carteira_views, name='adicionar_conta'),
+    path('carteira/cartao/adicionar/', views.carteira_views, name='adicionar_cartao'),
+    path('carteira/transacao/adicionar/', views.carteira_views, name='adicionar_transacao'),
 
     # Operações em cartões
-    path('minhas-contas/cartao/<int:cartao_id>/pagar/', views.pagar_fatura, name='pagar_fatura'),
-    path('minhas-contas/cartao/<int:cartao_id>/transacoes/', views.transacoes_cartao, name='transacoes_cartao'),
+    path('carteira/cartao/<int:cartao_id>/pagar/', views.pagar_fatura, name='pagar_fatura'),
+    path('carteira/cartao/<int:cartao_id>/transacoes/', views.transacoes_cartao, name='transacoes_cartao'),
 
     path('categorias/', views.listar_categorias, name='categorias'),
     path('categorias/criar/', views.criar_categoria, name='criar_categoria'),
