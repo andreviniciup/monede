@@ -10,6 +10,7 @@ from django.http import JsonResponse
 from django.db.models import Q
 from .models import Transacao, Categoria, DespesaPlanejada, Pagamento, Meta, Limites , Subcategoria, Cartao, Conta, Banco, Logo
 from .forms import TransacaoForm, PagamentoForm, CategoriaForm, SubcategoriaForm, CartaoForm, TransacaoCartaoForm, ContaForm, BancoForm
+from .calculations import FinancialAnalyzer
 import json
 import joblib
 import requests
@@ -279,7 +280,110 @@ def buscar_transacoes(request):
         return JsonResponse({'error': str(e)}, status=500)
 
 def relatorios_view(request):
-    return render(request, 'financas/relatorios.html')
+    analyzer = FinancialAnalyzer()
+    hoje = timezone.now()
+
+    try:
+        # Obtém todas as transações
+        transacoes = Transacao.objects.all()
+        cartoes = Cartao.objects.all()
+
+        # Análises básicas
+        variacoes = analyzer.calculate_variation(transacoes, period='monthly')
+        tendencias = analyzer.analyze_trends(transacoes)
+        resumo_mensal = analyzer.get_monthly_summary(transacoes, hoje.year, hoje.month)
+
+        # Análises por categoria
+        categorias = Categoria.objects.all()
+        status_orcamento = analyzer.analyze_budget_status(categorias, transacoes)
+
+        # Projeções futuras
+        projecoes, intervalos_confianca = analyzer.project_future_values(transacoes, months_ahead=12)
+        
+        # Análise de cartões
+        analise_cartoes = {}
+        for cartao in cartoes:
+            transacoes_cartao = cartao.transacoes_cartao.all()
+            if transacoes_cartao.exists():
+                analise_cartoes[cartao.id] = {
+                    'nome': cartao.nome,
+                    'tendencia': analyzer.analyze_trends(transacoes_cartao),
+                    'projecao': analyzer.project_future_values(
+                        transacoes_cartao, 
+                        months_ahead=3)[0] #Pegamos só as projeções, sem intervalo
+                }
+        
+        # Análise de limites
+        limites = Limites.objects.all()
+        analise_limites = {}
+        for limite in limites:
+            transacoes_categoria = transacoes.filter(categoria=limite.categoria)
+            if transacoes_categoria.exists():
+                analise_limites[limite.id] = {
+                    'titulo': limite.titulo,
+                    'valor': float(limite.valor),
+                    'tendencia': analyzer.analyze_trends(transacoes_categoria).value,
+                    'projecao_proximos_meses': analyzer.project_future_values(
+                        transacoes_categoria, 
+                        months_ahead=3)[0]
+                }
+
+        context = {
+            'variacoes': variacoes,
+            'tendencias': {k: v.value for k, v in tendencias.items()},
+            'resumo_mensal': resumo_mensal,
+            'projecoes': projecoes,
+            'intervalos_confianca': intervalos_confianca,
+            'status_orcamento': status_orcamento,
+            'analise_cartoes': analise_cartoes,
+            'analise_limites': analise_limites,
+            'mes_atual': hoje.strftime("%B %Y"),
+            'erro': None
+            }
+        
+    except Exception as e:
+        context = {
+            'erro': f"Erro ao gerar relatórios: {str(e)}",
+            'mes_atual': hoje.strftime("%B %Y")
+        }
+
+    return render(request, 'financas/relatorios.html', context)
+
+def exportar_relatorio(request):
+    """View para exportar relatório em formato JSON"""
+    analyzer = FinancialAnalyzer()
+    
+    try:
+        transacoes = Transacao.objects.all()
+        categorias = Categoria.objects.all()
+        hoje = timezone.now()
+        
+        dados_relatorio = {
+            'data_geracao': hoje.isoformat(),
+            'resumo_mensal': analyzer.get_monthly_summary(
+                transacoes,
+                hoje.year,
+                hoje.month
+            ),
+            'variacoes': analyzer.calculate_variation(transacoes),
+            'tendencias': {k: v.value for k, v in analyzer.analyze_trends(transacoes).items()},
+            'status_orcamento': analyzer.analyze_budget_status(categorias, transacoes),
+            'totais': {
+                'receitas': float(transacoes.filter(tipo='RECEITA').aggregate(sum('valor'))['valor__sum'] or 0),
+                'despesas': float(transacoes.filter(tipo='DESPESA').aggregate(sum('valor'))['valor__sum'] or 0)
+            }
+        }
+        
+        # Configura a resposta HTTP como um arquivo para download
+        response = JsonResponse(dados_relatorio)
+        response['Content-Disposition'] = 'attachment; filename="relatorio_financeiro.json"'
+        return response
+        
+    except Exception as e:
+        return JsonResponse({
+            'status': 'error',
+            'message': str(e)
+        })
 
 def lista_metas_view(request):
     metas = Meta.objects.all()
@@ -389,41 +493,66 @@ def processar_pagamento(request, pagamento_id):
 
 
 def plano_de_gastos_view(request):
+    analyzer = FinancialAnalyzer()
     hoje = timezone.now()
     mes_atual = hoje.strftime("%B %Y")
 
-    categorias = Categoria.objects.all()
-    categoria_data = [{
-        'nome': cat.nome,
-        'valor': float(cat.valor_total),
-        'cor': cat.cor
-    } for cat in categorias]
+    try:
+        categorias = Categoria.objects.all()
+        transacoes = Transacao.objects.all()
 
-    orcamento_total = sum(cat.orcamento for cat in categorias)
-    gastos_total = sum(cat.valor_total for cat in categorias)
-    saldo_restante = orcamento_total - gastos_total
+        status_orcamento = analyzer.analyze_budget_status(categorias, transacoes)
+        tendencias = analyzer.analyze_trends(transacoes)
+        resultado_projecoes = analyzer.project_future_values(transacoes, months_ahead=12)
+        projecoes_futuras = resultado_projecoes[0]
+        intervalos_confianca = resultado_projecoes[1]
 
-    despesas = DespesaPlanejada.objects.all()
-    despesas_data = [{
-        'id': desp.id,
-        'nome': desp.nome,
-        'cor': desp.cor,
-        'valor_total': float(desp.valor_total),
-        'valor_gasto': float(desp.valor_gasto),
-        'valor_faltante': float(desp.valor_faltante),
-        'percentual_gasto': desp.percentual_gasto
-    } for desp in despesas]
+        categoria_data = [{
+            'nome': cat.nome,
+            'valor': float(cat.valor_total),
+            'cor': cat.cor,
+            'orcamento': float(cat.orcamento),
+            'percentual_usado': status_orcamento[cat.nome]['percentual_usado'],
+            'disponivel': status_orcamento[cat.nome]['disponivel'],
+            'tendencia': tendencias.get(cat.nome, 'STABLE').value
+        } for cat in categorias]
 
-    context = {
-        'mes_atual': mes_atual,
-        'categorias': categorias,
-        'orcamento_total': orcamento_total,
-        'gastos_total': gastos_total,
-        'saldo_restante': saldo_restante,
-        'despesas_planejadas': despesas,
-        'categoria_data': json.dumps(categoria_data),
-        'despesas_data': json.dumps(despesas_data)
-    }
+        orcamento_total = sum(cat.orcamento for cat in categorias)
+        gastos_total = sum(cat.valor_total for cat in categorias)
+        saldo_restante = orcamento_total - gastos_total
+
+        despesas = DespesaPlanejada.objects.all()
+        despesas_data = [{
+            'id': desp.id,
+            'nome': desp.nome,
+            'cor': desp.cor,
+            'valor_total': float(desp.valor_total),
+            'valor_gasto': float(desp.valor_gasto),
+            'valor_faltante': float(desp.valor_faltante),
+            'percentual_gasto': desp.percentual_gasto,
+            'projecao_proximos_meses': projecoes_futuras.get(desp.nome, [])
+        } for desp in despesas]
+
+        context = {
+            'mes_atual': mes_atual,
+            'categorias': categorias,
+            'orcamento_total': orcamento_total,
+            'gastos_total': gastos_total,
+            'saldo_restante': saldo_restante,
+            'despesas_planejadas': despesas,
+            'categoria_data': json.dumps(categoria_data),
+            'despesas_data': json.dumps(despesas_data),
+            'status_orcamento': status_orcamento,
+            'tendencias': {k: v.value for k, v in tendencias.items()},
+            'projecoes': projecoes_futuras,
+            'intervalos_confianca': intervalos_confianca
+        }
+
+    except Exception as e:
+        context = {
+            'mes_atual': mes_atual,
+            'erro': f"Erro ao processar dados: {str(e)}"
+        }
 
     return render(request, 'financas/plano_de_gastos.html', context)
 
