@@ -78,7 +78,6 @@
               <td class="banco {% if transacao.banco == 'Nubank' %}nubank{% elif transacao.banco == 'Itaú' %}itau{% endif %}">{{ transacao.banco }}</td>
               <td>
                 <div class="categoria" style="background-color: {{ transacao.categoria.cor|default:'#ccc' }}">
-                  <!-- <img src="{% static transacao.icone %}" alt="{{ transacao.titulo }}">-->
                   {{ transacao.categoria }}
               </div>
               </td>
