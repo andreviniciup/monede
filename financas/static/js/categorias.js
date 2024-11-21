@@ -1,49 +1,21 @@
-// static/js/categorias.js
-document.addEventListener('DOMContentLoaded', function() {
-    const modal = document.getElementById('modalCategoria');
-    const botaoCriar = document.getElementById('botaoCriarCategoria');
-    const campoCor = document.querySelector('input[name="cor"]');
-    const campoIcone = document.querySelector('input[name="icone"]');
-    
-    // Abrir modal
-    botaoCriar.addEventListener('click', function() {
-        modal.style.display = 'block';
-    });
-    
-    // Fechar modal ao clicar fora
-    window.addEventListener('click', function(evento) {
-        if (evento.target === modal) {
-            modal.style.display = 'none';
-        }
-    });
-    
-    // Funcionalidade do seletor de cor
-    const opcoesCor = document.querySelectorAll('.opcao-cor');
-    opcoesCor.forEach(opcao => {
-        const cor = opcao.dataset.cor;
-        opcao.style.backgroundColor = cor;
-        
-        opcao.addEventListener('click', function() {
-            campoCor.value = cor;
-            // Remove a classe selecionada de todas as opções
-            opcoesCor.forEach(opt => opt.classList.remove('selecionada'));
-            // Adiciona a classe selecionada à opção clicada
-            opcao.classList.add('selecionada');
-        });
-    });
-    
-    // Funcionalidade do seletor de ícone
-    const opcoesIcone = document.querySelectorAll('.opcao-icone');
-    opcoesIcone.forEach(opcao => {
-        const icone = opcao.dataset.icone;
-        opcao.innerHTML = `<i class="${icone}"></i>`;
-        
-        opcao.addEventListener('click', function() {
-            campoIcone.value = icone;
-            // Remove a classe selecionada de todas as opções
-            opcoesIcone.forEach(opt => opt.classList.remove('selecionada'));
-            // Adiciona a classe selecionada à opção clicada
-            opcao.classList.add('selecionada');
-        });
-    });
+// Função para abrir o modal com informações da categoria
+function abrirModal(nomeCategoria, corCategoria, iconeCategoria) {
+    // Preencher os dados da categoria no modal
+    document.getElementById('modal-nome-categoria').innerText = nomeCategoria;
+    document.getElementById('modal-icone-categoria').innerHTML = `<i class="${iconeCategoria}" style="background-color: ${corCategoria};"></i>`;
+    document.getElementById('input-nome-categoria').value = nomeCategoria;
+
+    // Exibir o modal
+    document.getElementById('modalCategoriaInfo').style.display = 'block';
+}
+
+// Função para fechar o modal
+function fecharModal() {
+    // Ocultar o modal
+    document.getElementById('modalCategoriaInfo').style.display = 'none';
+}
+
+// Configuração do slider
+document.getElementById('valor-slider').addEventListener('input', function() {
+    document.getElementById('valor').value = this.value;
 });

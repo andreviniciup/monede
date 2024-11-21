@@ -43,10 +43,13 @@ class SubcategoriaForm(forms.ModelForm):
 class CartaoForm(forms.ModelForm):
     class Meta:
         model = Cartao
-        fields = ['nome_cartao', 'tipo_cartao', 'data_fechamento', 'data_vencimento']
+        fields = ['banco', 'nome_cartao', 'limite_total', 'data_fechamento', 'data_vencimento']
         widgets = {
-            'data_fechamento': forms.DateInput(attrs={'type': 'date'}),
-            'data_vencimento': forms.DateInput(attrs={'type': 'date'}),
+            'banco': forms.Select(attrs={'class': 'form-control'}),
+            'nome_cartao': forms.TextInput(attrs={'class': 'form-control'}),
+            'limite_total': forms.NumberInput(attrs={'class': 'form-control', 'step': '0.01'}),
+            'data_fechamento': forms.Select(choices=[(i, i) for i in range(1, 32)], attrs={'class': 'form-control'}),
+            'data_vencimento': forms.Select(choices=[(i, i) for i in range(1, 32)], attrs={'class': 'form-control'}),
         }
 
 

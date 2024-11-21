@@ -427,65 +427,53 @@ def plano_de_gastos_view(request):
 
     return render(request, 'financas/plano_de_gastos.html', context)
 
-
 def carteira_views(request):
-    contas = Conta.objects.all()  
-    bancos = Banco.objects.all()  
-    cartoes = Cartao.objects.all()
-    
-    # Formulários
-    banco_form = BancoForm()
-    conta_form = ContaForm()
-    cartao_form = CartaoForm()
-    transacao_form = TransacaoCartaoForm()
-
-    # Tratamento de diferentes formulários
-    if request.method == 'POST':
-        if 'adicionar_banco' in request.POST:  # Identifica qual formulário foi enviado
-            banco_form = BancoForm(request.POST, request.FILES)
-            if banco_form.is_valid():
-                banco_form.save()
-                messages.success(request, 'Banco adicionado com sucesso!')
-                return redirect('meus_cartoes')
-
-        elif 'adicionar_conta' in request.POST:
-            conta_form = ContaForm(request.POST)
-            if conta_form.is_valid():
-                conta = conta_form.save(commit=False)
-                conta.usuario = request.user
-                conta.save()
-                messages.success(request, 'Conta criada com sucesso!')
-                return redirect('meus_cartoes')
-
-        elif 'adicionar_cartao' in request.POST:
-            cartao_form = CartaoForm(request.POST)
-            if cartao_form.is_valid():
-                cartao = cartao_form.save(commit=False)
-                cartao.usuario = request.user
-                cartao.save()
-                messages.success(request, 'Cartão adicionado com sucesso!')
-                return redirect('meus_cartoes')
-
-        elif 'adicionar_transacao' in request.POST:
-            transacao_form = TransacaoCartaoForm(request.POST)
-            if transacao_form.is_valid():
-                transacao = transacao_form.save(commit=False)
-                transacao.cartao_id = request.POST.get('cartao_id')  # Recebe o ID do cartão do formulário
-                transacao.save()
-                messages.success(request, 'Transação adicionada com sucesso!')
-                return redirect('meus_cartoes')
-
     context = {
-        'contas': contas,
-        'bancos': bancos,
-        'cartoes': cartoes,
-        'banco_form': banco_form,
-        'conta_form': conta_form,
-        'cartao_form': cartao_form,
-        'transacao_form': transacao_form
+        'contas': Conta.objects.all(),
+        'bancos': Banco.objects.all(),
+        'cartoes': Cartao.objects.all(),
+        'dias': range(1, 32),
+        'conta_form': ContaForm(),  # Formulário vazio para renderizar a página inicial
+        'cartao_form': CartaoForm(),
+        'transacao_form': TransacaoCartaoForm(),
     }
 
     return render(request, 'financas/meus_cartoes.html', context)
+
+
+def adicionar_conta(request):
+    if request.method == 'POST':
+        conta_form = ContaForm(request.POST)
+        print("Dados recebidos:", request.POST)
+
+        if conta_form.is_valid():
+            conta_form.save()
+            messages.success(request, 'Conta criada com sucesso!')
+        else:
+            print("Erros de validação:", conta_form.errors)
+            messages.error(request, 'Erro ao criar conta. Verifique os dados e tente novamente.')
+    return redirect('meus_cartoes')
+
+
+def adicionar_cartao(request):
+    if request.method == 'POST':
+        cartao_form = CartaoForm(request.POST)
+        if cartao_form.is_valid():
+            cartao = cartao_form.save(commit=False)
+            try:
+                banco_id = request.POST.get('banco')
+                cartao.banco = Banco.objects.get(id=banco_id)
+                cartao.save()
+                messages.success(request, 'Cartão adicionado com sucesso!')
+            except Banco.DoesNotExist:
+                messages.error(request, 'Banco não encontrado.')
+            except Exception as e:
+                messages.error(request, f'Ocorreu um erro inesperado: {e}')
+        else:
+            print("Erros de validação:", cartao_form.errors)
+            messages.error(request, 'Erro ao adicionar cartão. Verifique os dados.')
+    return redirect('meus_cartoes')
+
 
 
 def pagar_fatura(request, cartao_id):
@@ -598,6 +586,23 @@ def criar_categoria(request):
             messages.error(request, "Erro ao criar a categoria. Verifique os dados do formulário.")
     return redirect('categorias')
 
+def adicionar_limite(request):
+    if request.method == 'POST':
+        nome_categoria = request.POST.get('categoria_nome')
+        valor = request.POST.get('valor')
+        recorrencia = request.POST.get('recorrencia')
+
+        # Lógica para salvar o limite da categoria
+        # Exemplo:
+        # categoria = Categoria.objects.get(nome=nome_categoria)
+        # categoria.limite = valor
+        # categoria.recorrencia = recorrencia
+        # categoria.save()
+
+        messages.success(request, 'Limite adicionado com sucesso!')
+        return redirect('categoiras')
+
+    return redirect('categorias')
 
 
 # API view to get subcategories (optional - for dynamic loading)

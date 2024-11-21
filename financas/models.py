@@ -191,34 +191,45 @@ class Pagamento(models.Model):
     def esta_atrasado(self):
         return self.data_vencimento < timezone.now().date() and self.status == 'pendente'
 
+class Banco(models.Model):
+    codigo = models.CharField(max_length=10, unique=True)
+    nome_completo = models.CharField(max_length=100)
+    nome = models.CharField(max_length=50)
+    logo = models.ImageField(upload_to='logos_bancos/', blank=True, null=True)
+    cor = models.CharField(max_length=7, blank=True, null=True)
+
+    def __str__(self):
+        return self.nome
+
 
 class Cartao(models.Model):
-    BANDEIRAS = (
-        ('MASTER', 'Mastercard'),
-        ('INTER', 'Inter'),
-    )
-    
     STATUS = (
         ('ABERTA', 'Aberta'),
         ('FECHADA', 'Fechada'),
     )
-    
-    tipo_cartao = models.CharField(max_length=10, choices=BANDEIRAS)
+
+    banco = models.ForeignKey(Banco, on_delete=models.CASCADE, related_name="cartoes",null=True)  # Associação com o banco
     nome_cartao = models.CharField(max_length=100)
-    data_fechamento = models.DateField()
-    data_vencimento = models.DateField()
+    limite_total = models.DecimalField(max_digits=10, decimal_places=2, default=0.00)  # Limite total do cartão
+    data_fechamento = models.IntegerField() 
+    data_vencimento = models.IntegerField()
     status = models.CharField(max_length=10, choices=STATUS, default='ABERTA')
-    
+
     class Meta:
         verbose_name = 'Cartão'
         verbose_name_plural = 'Cartões'
-    
+
     def __str__(self):
         return self.nome_cartao
-    
+
     def valor_fatura(self):
-        transacoes = self.transacoes_cartao.all()  # Mudança para acessar transações específicas de cartão
+        transacoes = self.transacoes_cartao.all()
         return sum(t.valor for t in transacoes)
+    
+    def save(self, *args, **kwargs):
+        print(f"Salvando cartão: {self.nome_cartao}, Banco: {self.banco}, Limite: {self.limite_total}")
+        super().save(*args, **kwargs)
+
 
 class TransacaoCartao(models.Model):
     cartao = models.ForeignKey(Cartao, on_delete=models.CASCADE, related_name='transacoes_cartao')
@@ -230,18 +241,7 @@ class TransacaoCartao(models.Model):
         return f"{self.descricao} - {self.valor}"
     
 
-class Banco(models.Model):
-    codigo = models.CharField(max_length=10, unique=True)
-    nome_completo = models.CharField(max_length=100)
-    nome = models.CharField(max_length=50)
-    logo = models.ImageField(upload_to='logos_bancos/', blank=True, null=True)
-    cor = models.CharField(max_length=7, blank=True, null=True)
-
-    def __str__(self):
-        return self.nome
-
 class Conta(models.Model):
-    usuario = models.ForeignKey(User, on_delete=models.CASCADE)
     banco = models.ForeignKey(Banco, on_delete=models.SET_NULL, null=True)
     titulo = models.CharField(max_length=100)
     saldo = models.DecimalField(max_digits=10, decimal_places=2)

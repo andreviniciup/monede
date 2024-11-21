@@ -58,7 +58,7 @@
             <section class="accounts-section">
                 <div class="section-header">
                     <h2 class="section-subtitle">Minhas contas</h2>
-                    <button class="add-button" onclick="openModal('modalConta')">
+                    <button class="add-button" onclick="abrirModalConta()">
                         <span class="add-icon">+</span>
                         <span>Adicionar Contas</span>
                     </button>
@@ -86,72 +86,110 @@
         </div>
     </div>
     
-    <!-- Credit Card Modal -->
-    <div id="modalCartao" class="modal">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h2>Novo Cartão</h2>
-                <button class="close-button" onclick="closeModal('modalCartao')">&times;</button>
-            </div>
-            <form method="POST" action="{% url 'adicionar_cartao' %}">
-                {% csrf_token %}
-                <div class="form-group">
-                    <label for="nome_cartao">Nome do Cartão*</label>
-                    {{ form.nome_cartao }}
-                </div>
-                <div class="form-group">
-                    <label for="tipo_cartao">Bandeira*</label>
-                    {{ form.tipo_cartao }}
-                </div>
-                <div class="form-group">
-                    <label for="data_fechamento">Data de Fechamento*</label>
-                    {{ form.data_fechamento }}
-                </div>
-                <div class="form-group">
-                    <label for="data_vencimento">Data de Vencimento*</label>
-                    {{ form.data_vencimento }}
-                </div>
-                <div class="modal-actions">
-                    <button type="button" class="cancel-button" onclick="closeModal('modalCartao')">Cancelar</button>
-                    <button type="submit" class="confirm-button">Confirmar</button>
-                </div>
-            </form>
+   
+<!-- Credit Card Modal -->
+<div id="modalCartao" class="modal">
+    <div class="modal-content">
+        <div class="modal-header">
+            <h2>Novo Cartão</h2>
+            <button class="close-button" onclick="closeModal('modalCartao')">&times;</button>
         </div>
+        <form method="POST" action="{% url 'adicionar_cartao' %}">
+            {% csrf_token %}
+            <div class="form-group">
+                <label for="banco">Banco*</label>
+                <select id="banco" name="banco" class="form-input" required>
+                    {% for banco in bancos %}
+                    <option value="{{ banco.id }}">{{ banco.nome }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+            <div class="form-group">
+                <label for="nome_cartao">Nome do Cartão*</label>
+                <input type="text" id="nome_cartao" name="nome_cartao" class="form-input" required>
+            </div>
+            <div class="form-group">
+                <label for="limite_total">Limite Total*</label>
+                <div class="input-valor">
+                    <span class="prefixo-valor">R$</span>
+                    <input type="number" id="limite_total" name="limite_total" 
+                           step="0.01" required class="input-padrao"
+                           placeholder="0,00">
+                </div>
+            </div>
+            <div class="form-group">
+                <label for="fecha_fatura">Fecha Fatura Dia*</label>
+                <select id="fecha_fatura" name="data_fechamento" class="form-input" required>
+                    {% for dia in dias %}
+                    <option value="{{ dia }}">{{ dia }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+            <div class="form-group">
+                <label for="vence_fatura">Vence Dia*</label>
+                <select id="vence_fatura" name="data_vencimento" class="form-input" required>
+                    {% for dia in dias %}
+                    <option value="{{ dia }}">{{ dia }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+            <div class="modal-actions">
+                <button type="button" class="cancel-button" onclick="closeModal('modalCartao')">Cancelar</button>
+                <button type="submit" class="confirm-button">Confirmar</button>
+            </div>
+        </form>
     </div>
+</div>
+
     
-    <!-- Bank Account Modal -->
-    <div id="modalConta" class="modal">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h2>Nova Conta</h2>
-                <button class="close-button" onclick="closeModal('modalConta')">&times;</button>
-            </div>
-            <form method="POST" action="{% url 'adicionar_conta' %}">
-                {% csrf_token %}
-                <div class="form-group">
-                    <label for="nome">Nome da Conta*</label>
-                    <input type="text" id="nome" name="nome" class="form-input" required>
-                </div>
-                <div class="form-group">
-                    <label for="banco">Banco*</label>
-                    <select id="banco" name="banco" class="form-input" required>
-                        {% for banco in bancos %}
-                        <option value="{{ banco.id }}">{{ banco.nome }}</option>
-                        {% endfor %}
-                    </select>
-                </div>
-                <div class="form-group">
-                    <label for="saldo_inicial">Saldo Inicial*</label>
-                    <div class="currency-input">
-                        <span class="currency-prefix">R$</span>
-                        <input type="number" id="saldo_inicial" name="saldo_inicial" class="form-input" step="0.01" required>
-                    </div>
-                </div>
-                <div class="modal-actions">
-                    <button type="button" class="cancel-button" onclick="closeModal('modalConta')">Cancelar</button>
-                    <button type="submit" class="confirm-button">Criar Conta</button>
-                </div>
-            </form>
+ <!--  Account Modal -->
+<div id="modalConta" class="modal">
+    <div class="modal-content">
+        <div class="modal-header">
+            <h2>Nova Conta</h2>
+            <button class="close-button" onclick="closeModal('modalConta')">&times;</button>
         </div>
+        <form method="POST" action="{% url 'adicionar_conta' %}">
+            {% csrf_token %}
+            <div class="form-group">
+                <label for="titulo">Título da Conta*</label>
+                <input type="text" id="titulo" name="titulo" class="form-input" required>
+            </div>
+            <div class="form-group">
+                <label for="banco">Banco*</label>
+                <select id="banco" name="banco" class="form-input" required>
+                    {% for banco in bancos %}
+                    <option value="{{ banco.id }}">{{ banco.nome }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+            <div class="form-group">
+                <label for="saldo">Saldo Inicial*</label>
+                <div class="input-valor">
+                    <span class="prefixo-valor">R$</span>
+                    <input type="number" id="saldo" name="saldo" 
+                           step="0.01" required class="input-padrao"
+                           placeholder="0,00">
+                </div>
+            </div>
+            <div class="modal-actions">
+                <button type="button" class="cancel-button" onclick="closeModal('modalConta')">Cancelar</button>
+                <button type="submit" class="confirm-button">Criar Conta</button>
+            </div>
+        </form>
     </div>
+
+            {% if messages %}
+                <div class="messages">
+                    {% for message in messages %}
+                        <div class="alert {{ message.tags }}">
+                            {{ message }}
+                        </div>
+                    {% endfor %}
+                </div>
+            {% endif %}
+
+
+</div>
+
 {% endblock %}

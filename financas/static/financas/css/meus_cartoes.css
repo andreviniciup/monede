@@ -1,9 +1,9 @@
-/* Main Layout */
+
 .dashboard-container {
- /* Account for sidebar */
-    padding: 32px;
+    max-width: 1150px;
+    margin: auto;
+    padding: 40px 10px;
     background-color: #F8F8F8;
-    min-height: 100vh;
 }
 
 .content-wrapper {

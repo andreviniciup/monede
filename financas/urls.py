@@ -28,13 +28,12 @@ urlpatterns = [
     path('pagamentos/adicionar/', views.adicionar_pagamento, name='adicionar_pagamento'),
     path('pagamentos/<int:pagamento_id>/processar/', views.processar_pagamento, name='processar_pagamento'),
 
-    path('carteira/', views.carteira_views, name='carteira'),
+
 
     # Endpoints para ações específicas
-    path('carteira/banco/adicionar/', views.carteira_views, name='adicionar_banco'),
-    path('carteira/conta/adicionar/', views.carteira_views, name='adicionar_conta'),
-    path('carteira/cartao/adicionar/', views.carteira_views, name='adicionar_cartao'),
-    path('carteira/transacao/adicionar/', views.carteira_views, name='adicionar_transacao'),
+    path('carteira/', views.carteira_views, name='meus_cartoes'),
+    path('carteira/conta/adicionar/', views.adicionar_conta, name='adicionar_conta'),
+    path('carteira/cartao/adicionar/', views.adicionar_cartao, name='adicionar_cartao'),
 
     # Operações em cartões
     path('carteira/cartao/<int:cartao_id>/pagar/', views.pagar_fatura, name='pagar_fatura'),
@@ -42,6 +41,7 @@ urlpatterns = [
 
     path('categorias/', views.listar_categorias, name='categorias'),
     path('categorias/criar/', views.criar_categoria, name='criar_categoria'),
+    path('categorias/limites/', views.adicionar_limite, name='adicionar_limite'),
     path('subcategorias/', views.listar_subcategorias, name='subcategorias'),
     path('subcategorias/criar/', views.criar_subcategoria, name='criar_subcategoria'),
     path('meus-limites/', views.meus_limites, name='meus_limites'),
