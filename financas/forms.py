@@ -2,12 +2,25 @@ from django import forms
 from .models import Transacao, Pagamento, Categoria, Subcategoria, Cartao, TransacaoCartao, Banco, Conta
 
 class TransacaoForm(forms.ModelForm):
-    categoria = forms.ModelChoiceField(queryset=Categoria.objects.all(), required=True)
-    conta = forms.ModelChoiceField(queryset=Conta.objects.all(), required=True)
+    categoria = forms.ModelChoiceField(
+        queryset=Categoria.objects.all(), 
+        required=True, 
+        label="Categoria"
+    )
+    conta = forms.ModelChoiceField(
+        queryset=Conta.objects.all(), 
+        required=False, 
+        label="Conta"
+    )
+    cartao = forms.ModelChoiceField(
+        queryset=Cartao.objects.all(), 
+        required=False, 
+        label="Cartão"
+    )
 
     class Meta:
         model = Transacao
-        fields = ['valor', 'tipo', 'categoria', 'conta']
+        fields = ['titulo', 'valor', 'tipo', 'categoria', 'conta', 'cartao', 'data']
       
 
 class PagamentoForm(forms.ModelForm):

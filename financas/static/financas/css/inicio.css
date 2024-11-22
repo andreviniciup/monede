@@ -35,14 +35,15 @@
   gap: 20px;
 }
 
-.receita, .despesas {
+.receita, .despesas,.balanço {
   padding: 10px;
   flex: 1;
   min-width: 200px;
 }
 
 .receita > div:first-child,
-.despesas > div:first-child {
+.despesas > div:first-child,
+.balanço > div:first-child{
   color: #3F9DAC;
   font-size: 15px;
   margin-bottom: 5px;

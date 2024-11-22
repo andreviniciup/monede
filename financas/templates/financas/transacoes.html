@@ -20,28 +20,21 @@
 
     <div class="frame-210">
       <div class="frame-209">
-        <div class="botao-filtros">
-          <select class "botao-filtros" id="timeRange" onchange="updateTimeRange(this.value)">
-            <option value="7">Últimos 7 dias</option>
-            <option value="15">Últimos 15 dias</option>
-            <option value="30">Últimos 30 dias</option>
-        </select>
-        </div>
-
-        <form method="get" action="{% url 'transacoes' %}">
-          <label for="data_inicial">Data Inicial:</label>
-          <input type="date" name="data_inicial" id="data_inicial" value="{{ data_inicial }}">
+        <div class="filtros-container">
+          <div class="botao-filtros">
+            <select class="select-filtros" id="timeRange" onchange="updateTimeRange(this.value)">
+              <option value="7">Últimos 7 dias</option>
+              <option value="15">Últimos 15 dias</option>
+              <option value="30">Últimos 30 dias</option>
+            </select>
+          </div>
         
-          <label for="data_final">Data Final:</label>
-          <input type="date" name="data_final" id="data_final" value="{{ data_final }}">
         
-          <button type="submit">Filtrar</button>
-        </form>
-        
-        <div class="barra-pesquisa">
-          <img src="{% static 'icons/search-icon.svg' %}" class="vector-pesquisa" alt="Ícone de pesquisa">
-          <input type="text" class="input-pesquisa"  id="search-transactions"  placeholder="Pesquisar transações">
-        </div>
+          <div class="barra-pesquisa">
+            <input type="text" class="input-pesquisa" id="search-transactions" placeholder="Pesquisar">
+            <img src="{% static 'icons/search-icon.svg' %}" class="vector-pesquisa" alt="Ícone de pesquisa">
+          </div>
+        </div>        
       </div>
     </div>
 
@@ -75,7 +68,7 @@
               <td>{{ transacao.data }}</td>
               <td>{{ transacao.valor|floatformat:2 }}</td>
               <td class="tipo {% if transacao.tipo == 'DESPESA' %}despesa{% else %}receita{% endif %}">{{ transacao.tipo }}</td>
-              <td class="banco {% if transacao.banco == 'Nubank' %}nubank{% elif transacao.banco == 'Itaú' %}itau{% endif %}">{{ transacao.banco }}</td>
+              <td class="banco">{% if transacao.forma_pagamento %}{% if transacao.forma_pagamento_type.model == 'conta' %}{{ transacao.forma_pagamento.titulo }} <!-- Exibe o título da conta -->{% elif transacao.forma_pagamento_type.model == 'cartao' %}{{ transacao.forma_pagamento.nome_cartao }} <!-- Exibe o nome do cartão -->{% else %}Não definido{% endif %}{% else %}Não especificado{% endif %}</td>
               <td>
                 <div class="categoria" style="background-color: {{ transacao.categoria.cor|default:'#ccc' }}">
                   {{ transacao.categoria }}
@@ -98,7 +91,6 @@
       </table>
     </div>
   </div>
-
   <div id="modalTransacao" class="modal">
     <div class="conteudo-modal">
         <div class="cabecalho-modal">
@@ -130,8 +122,6 @@
             <div class="grupo-form">
                 <label for="data_transacao">Data da transação*</label>
                 <div class="input-data">
-                  <input type="checkbox" id="data_automatica" name="data_automatica" onchange="toggleDataManual(this)">
-                  <label for="data_automatica">Definir data automaticamente</label>
                   <input type="date" id="data_transacao" name="data" class="input-padrao" required>
               </div>
             </div>
@@ -147,37 +137,39 @@
                 </select>
             </div>
 
+            <!-- Campo para selecionar tipo de forma de pagamento -->
             <div class="grupo-form">
-              <label for="tipo-conta-cartao">Tipo</label>
-              <select id="tipo-conta-cartao" name="tipo_conta_cartao" class="input-padrao" onchange="atualizarOpcoesContaCartao()">
+              <label for="forma_pagamento_tipo">Forma de Pagamento</label>
+              <select id="forma_pagamento_tipo" name="forma_pagamento_tipo" class="input-padrao" required>
                   <option value="">Selecionar tipo</option>
-                  <option value="CONTA">Conta</option>
-                  <option value="CARTAO">Cartão</option>
-              </select>
-            </div>
-            
-            <!-- Campo para selecionar Conta ou Cartão -->
-            <div class="grupo-form" id="grupo-conta" style="display: none;">
-              <label for="conta">Conta</label>
-              <select id="conta" name="conta" class="input-padrao">
-                  <option value="">Selecionar conta</option>
-                  {% for conta in contas %}
-                  <option value="{{ conta.id }}">{{ conta.nome }}</option>
-                  {% endfor %}
-              </select>
-            </div>
-            
-            <div class="grupo-form" id="grupo-cartao" style="display: none;">
-              <label for="cartao">Cartão</label>
-              <select id="cartao" name="cartao" class="input-padrao">
-                  <option value="">Selecionar cartão</option>
-                  {% for cartao in cartoes %}
-                  <option value="{{ cartao.id }}">{{ cartao.nome }}</option>
-                  {% endfor %}
+                  <option value="conta">Conta</option>
+                  <option value="cartao">Cartão</option>
               </select>
             </div>
 
-             <!-- Campo Tipo -->
+            <!-- Campo para selecionar Conta -->
+            <div class="grupo-form" id="grupo-conta" style="display: none;">
+                <label for="conta">Conta</label>
+                <select id="conta" name="forma_pagamento_conta" class="input-padrao">
+                    <option value="">Selecionar conta</option>
+                    {% for conta in contas %}
+                        <option value="{{ conta.id }}">{{ conta.titulo }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+
+            <!-- Campo para selecionar Cartão -->
+            <div class="grupo-form" id="grupo-cartao" style="display: none;">
+                <label for="cartao">Cartão</label>
+                <select id="cartao" name="forma_pagamento_cartao" class="input-padrao">
+                    <option value="">Selecionar cartão</option>
+                    {% for cartao in cartoes %}
+                        <option value="{{ cartao.id }}">{{ cartao.nome_cartao }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+
+            <!-- Campo Tipo -->
             <div class="grupo-form">
               <label for="tipo">Tipo de Transação*</label>
               <select id="tipo" name="tipo" class="input-padrao" required>
@@ -191,4 +183,27 @@
         </form>
     </div>
 </div>
+
+<script>
+    // Captura do campo de seleção de forma de pagamento
+    const tipoPagamento = document.getElementById('forma_pagamento_tipo');
+    const grupoConta = document.getElementById('grupo-conta');
+    const grupoCartao = document.getElementById('grupo-cartao');
+
+    // Lógica para mostrar/ocultar os campos de conta ou cartão
+    tipoPagamento.addEventListener('change', function() {
+        const tipoSelecionado = tipoPagamento.value;
+        if (tipoSelecionado === 'conta') {
+            grupoConta.style.display = 'block';
+            grupoCartao.style.display = 'none';
+        } else if (tipoSelecionado === 'cartao') {
+            grupoConta.style.display = 'none';
+            grupoCartao.style.display = 'block';
+        } else {
+            grupoConta.style.display = 'none';
+            grupoCartao.style.display = 'none';
+        }
+    });
+</script>
+
 {% endblock %}

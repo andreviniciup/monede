@@ -68,7 +68,7 @@ class Transacao(models.Model):
         related_name='transacoes'
     )
     titulo = models.CharField(max_length=100, null=True)
-    data = models.DateTimeField(auto_now_add=True)
+    data = models.DateField(editable=True)
     logo = models.ForeignKey(Logo, on_delete=models.SET_NULL, null=True, blank=True)
 
     # Campos para a relação genérica
@@ -180,7 +180,7 @@ class Pagamento(models.Model):
     data_vencimento = models.DateField()
     frequencia = models.CharField(max_length=10, choices=FREQUENCIA_CHOICES)
     status = models.CharField(max_length=15, choices=STATUS_CHOICES, default='pendente')
-    forma_pagamento = models.CharField(max_length=200, null=True, blank=True)
+    forma_pagamento = models.CharField(max_length=200)
     categoria = models.CharField(max_length=255, blank=True, null=True)  # Determinada por ML
     data_criacao = models.DateTimeField(auto_now_add=True)
     ultima_atualizacao = models.DateTimeField(auto_now=True)

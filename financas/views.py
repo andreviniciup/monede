@@ -115,19 +115,17 @@ def buscar_logo_brandfetch(marca_nome):
 
 
 def transacoes_view(request):
-    transacoes = Transacao.objects.all()
+    # Inicializa a queryset de transações
+    transacoes = Transacao.objects.all().order_by('-data')
 
-    # Verifica se ambos os parâmetros de data foram passados pela URL
+    # Filtro de datas
     data_inicial = request.GET.get('data_inicial')
     data_final = request.GET.get('data_final')
 
-    # Filtra as transações apenas quando ambos os campos de data foram selecionados
     if data_inicial and data_final:
         try:
             data_inicial = datetime.strptime(data_inicial, '%Y-%m-%d')
             data_final = datetime.strptime(data_final, '%Y-%m-%d')
-
-            # Aplica o filtro de data somente se ambas as datas forem válidas
             if data_inicial <= data_final:
                 transacoes = transacoes.filter(data__gte=data_inicial, data__lte=data_final)
             else:
@@ -135,85 +133,76 @@ def transacoes_view(request):
         except ValueError:
             messages.error(request, 'Uma ou ambas as datas estão no formato inválido.')
 
-    # Processamento do formulário de nova transação
+    # Formulário de criação de nova transação
     if request.method == 'POST':
         form = TransacaoForm(request.POST)
         if form.is_valid():
             transacao = form.save(commit=False)
 
-            # Usar o modelo de ML para prever a marca com base no título da transação
-            marca_prevista = modelo_ml.predict([transacao.titulo])[0]
-            
-            # Buscar o logo no banco de dados ou via API se não existir
+            # Prever marca usando modelo de ML
+            titulo = transacao.titulo
+            marca_prevista = modelo_ml.predict([titulo])[0]
+
+            # Buscar ou obter o logo
             logo = Logo.objects.filter(nome__iexact=marca_prevista).first()
             if not logo:
                 logo = obter_logo_via_api(marca_prevista)
-
-            # Associar o logo previsto à transação
-            if logo:
-                transacao.logo = logo
-
+            transacao.logo = logo
             transacao.save()
+
             messages.success(request, 'Transação adicionada com sucesso.')
             return redirect('transacoes')
         else:
-            messages.error(request, 'Erro ao adicionar transação. Verifique os dados e tente novamente.')
+            messages.error(request, 'Erro ao adicionar transação. Verifique os dados.')
     else:
         form = TransacaoForm()
 
-    # Renderiza a página com as transações e o formulário
+    # Pegar categorias, contas e cartões para o formulário
+    categorias = Categoria.objects.all()
+    contas = Conta.objects.all()
+    cartoes = Cartao.objects.all()
+
+    # Renderizar o template com os dados necessários
     return render(request, 'financas/transacoes.html', {
         'transacoes': transacoes,
         'form': form,
         'data_inicial': data_inicial,
         'data_final': data_final,
+        'categorias': categorias,
+        'contas': contas,
+        'cartoes': cartoes,
     })
-
 
 def nova_transacao(request):
     if request.method == 'POST':
-        titulo = request.POST.get('titulo')
-        valor = request.POST.get('valor')
-        categoria_id = request.POST.get('categoria')
-        conta_id = request.POST.get('conta')
-        tipo = request.POST.get('tipo')  # Verifique se há um campo 'tipo' no formulário
-        
-        # Verifique se data automática está ativada
-        data_automatica = request.POST.get('data_automatica')
-        data = request.POST.get('data') if not data_automatica else timezone.now()
-        
-        try:
-            # Buscar categoria e conta associadas
-            categoria = Categoria.objects.get(id=categoria_id) if categoria_id else None
-            
-            # Prever marca com o modelo de ML
-            marca_prevista = modelo_ml.predict([titulo])[0]
-            
-            # Buscar ou obter logo via API
-            logo = Logo.objects.filter(nome__iexact=marca_prevista).first()
-            if not logo:
-                logo = obter_logo_via_api(marca_prevista)
+        form = TransacaoForm(request.POST)
+        if form.is_valid():
+            # Processa a transação
+            transacao = form.save(commit=False)
 
-            # Criar a transação
-            Transacao.objects.create(
-                titulo=titulo,
-                valor=valor,
-                data=data,
-                categoria=categoria,
-                tipo=tipo,
-                logo=logo
-            )
-            
+            # Verifica a forma de pagamento e associa a conta ou cartão
+            if 'forma_pagamento_conta' in request.POST:
+                conta_id = request.POST.get('forma_pagamento_conta')
+                conta = Conta.objects.get(id=conta_id)
+                transacao.forma_pagamento_type = ContentType.objects.get_for_model(Conta)
+                transacao.forma_pagamento_id = conta.id
+            elif 'forma_pagamento_cartao' in request.POST:
+                cartao_id = request.POST.get('forma_pagamento_cartao')
+                cartao = Cartao.objects.get(id=cartao_id)
+                transacao.forma_pagamento_type = ContentType.objects.get_for_model(Cartao)
+                transacao.forma_pagamento_id = cartao.id
+
+            transacao.save()
+
             messages.success(request, 'Transação criada com sucesso!')
             return redirect('transacoes')
-        except Exception as e:
-            print(f"Erro: {e}")
-            messages.error(request, f'Erro ao criar transação: {e}')
+        else:
+            messages.error(request, 'Erro ao criar transação. Verifique os dados e tente novamente.')
     
-    # Caso GET ou erro no POST, redirecionar para o formulário
-    categorias = Categoria.objects.all()
-    contas = Conta.objects.all()
-    return render(request, 'financas/transacoes.html', {'categorias': categorias, 'contas': contas})
+    else:
+        form = TransacaoForm()
+
+    return render(request, 'financas/transacoes.html', {'form': form, 'contas': Conta.objects.all(), 'cartoes': Cartao.objects.all()})
 
 
 def buscar_transacoes(request):
@@ -451,6 +440,46 @@ def atualizar_meta(request, meta_id):
 
     return JsonResponse({'error': 'Método não permitido.'}, status=405)
 
+def editar_meta_view(request, meta_id):
+    try:
+        meta = Meta.objects.get(id=meta_id)
+    except Meta.DoesNotExist:
+        return JsonResponse({'error': 'Meta não encontrada.'}, status=404)
+
+    if request.method == 'POST':
+        titulo = request.POST.get('titulo')
+        valor_meta = request.POST.get('valor_meta')
+        categoria_id = request.POST.get('categoria')
+        imagem = request.FILES.get('imagem')
+
+        try:
+            categoria = Categoria.objects.get(id=categoria_id) if categoria_id else None
+
+            meta.titulo = titulo
+            meta.valor_meta = valor_meta
+            meta.categoria = categoria
+            if imagem:
+                meta.imagem = imagem
+            meta.save()
+
+            return JsonResponse({'success': True, 'nova_titulo': meta.titulo, 'nova_valor': meta.valor_meta})
+
+        except Exception as e:
+            return JsonResponse({'error': str(e)}, status=500)
+
+    return JsonResponse({'error': 'Método não permitido.'}, status=405)
+
+def excluir_meta_view(request, meta_id):
+    try:
+        meta = Meta.objects.get(id=meta_id)
+        meta.delete()
+        messages.success(request, 'Meta excluída com sucesso!')
+    except Meta.DoesNotExist:
+        messages.error(request, 'Meta não encontrada.')
+    except Exception as e:
+        messages.error(request, 'Erro ao excluir a meta. Tente novamente.')
+
+    return redirect('lista-metas')
 
 
 def pagamentos_lista(request):

@@ -49,7 +49,7 @@
   font-family: "Nunito", Arial, sans-serif;
 }
 
-.dropdown, .dropdown-button-ultimos-7dias, .date-picker-button-inicial, .date-picker-button-final, .botao-filtros {
+.dropdown, .dropdown-button-ultimos-7dias, .date-picker-button-inicial, .date-picker-button-final{
   padding: 8px 15px;
   background: #F2F2F2;
   border-radius: 10px;
@@ -62,6 +62,73 @@
   color: #BEBEBE;
   cursor: pointer;
 }
+.filtros-container {
+  display: flex;
+  justify-content: space-between; /* Elementos ficam um à esquerda e outro à direita */
+  align-items: center; /* Alinha verticalmente no centro */
+  padding: 0 20px; /* Espaçamento lateral */
+  width: 100%; /* Garante que o contêiner ocupe toda a largura disponível */
+}
+
+.select-filtros, 
+input[type="date"], 
+.input-pesquisa {
+  padding: 8px 15px;
+  background: #F8F8F8;
+  border: 1px solid #BEBEBE;
+  border-radius: 20px;
+  font-family: "Nunito", Arial, sans-serif;
+  font-size: 14px;
+  color: #555;
+  outline: none;
+  width: auto;
+  min-width: 120px;
+}
+
+.select-filtros {
+  cursor: pointer;
+}
+
+.input-pesquisa {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.vector-pesquisa {
+  width: 16px;
+  height: 16px;
+  margin-left: -30px;
+  cursor: pointer;
+}
+
+.barra-pesquisa {
+  display: flex;
+  align-items: center;
+  position: relative;
+}
+
+.campo-filtro {
+  display: flex;
+  flex-direction: column;
+}
+
+.botao-submit {
+  padding: 8px 20px;
+  background: #4CAF50;
+  color: white;
+  border: none;
+  border-radius: 20px;
+  font-family: "Nunito", Arial, sans-serif;
+  font-size: 14px;
+  cursor: pointer;
+  transition: background 0.3s;
+}
+
+.botao-submit:hover {
+  background: #45a049;
+}
+
 
 .dropdown-content {
   display: none;
@@ -307,15 +374,6 @@ th {
   cursor: pointer;
 }
 
-.botao-filtros {
-  padding: 8px 15px;
-  background: #F2F2F2;
-  border-radius: 10px;
-  border: 1px #BEBEBE solid;
-  display: flex;
-  align-items: center;
-  gap: 5px;
-}
 
 .filtros-selecionados {
   margin-top: 10px;

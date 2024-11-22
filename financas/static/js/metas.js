@@ -1,126 +1,147 @@
-console.log('Script metas.js carregado');
+document.addEventListener("DOMContentLoaded", function () {
+    // Abre modal para adicionar meta
+    window.abrirModalMeta = function () {
+        document.getElementById("modalMeta").style.display = "block";
+    };
 
-document.addEventListener('DOMContentLoaded', function() {
-    const modal = document.getElementById('modalMeta');
-    const uploadArea = document.querySelector('.upload-imagem');
-    const inputImagem = document.getElementById('imagem');
+    // Fecha modal de adicionar meta
+    window.fecharModalMeta = function () {
+        document.getElementById("modalMeta").style.display = "none";
+    };
 
-    // Fecha o modal quando clica fora dele
-    window.onclick = function(event) {
-        if (event.target == modal) {
-            fecharModalMeta();
-        }
-    }
 
-    // Preview da imagem
-    uploadArea.addEventListener('click', () => inputImagem.click());
-    
-    inputImagem.addEventListener('change', function(e) {
-        const arquivo = e.target.files[0];
-        if (arquivo) {
-            const leitor = new FileReader();
-            leitor.onload = function(e) {
-                const placeholder = document.querySelector('.placeholder-upload');
-                placeholder.innerHTML = `
-                    <img src="${e.target.result}" 
-                         style="max-width: 100%; max-height: 140px; border-radius: 4px;">
-                `;
+    // Abre modal para adicionar valor
+    window.abrirModalValorMeta = function (button) {
+        const metaId = button.getAttribute("data-meta-id");
+        const modal = document.getElementById("modal-valor-meta");
+        modal.setAttribute("data-meta-id", metaId);
+        modal.style.display = "block";
+    };
+
+    // Fecha modal de adicionar valor
+    window.fecharModalValorMeta = function () {
+        document.getElementById("modal-valor-meta").style.display = "none";
+    };
+
+    // Enviar valor para a meta via AJAX
+    document.getElementById("form-valor-meta").addEventListener("submit", function (e) {
+        e.preventDefault();
+
+        const metaId = document.getElementById("modal-valor-meta").getAttribute("data-meta-id");
+        const valorMeta = document.getElementById("input-valor-meta").value;
+
+        fetch(`/metas/atualizar/${metaId}/`, {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json",
+                "X-CSRFToken": getCSRFToken(),
+            },
+            body: JSON.stringify({ valor_meta: valorMeta }),
+        })
+            .then((response) => response.json())
+            .then((data) => {
+                if (data.success) {
+                    alert("Meta atualizada com sucesso!");
+                    location.reload();
+                } else {
+                    alert("Erro ao atualizar a meta: " + data.error);
+                }
+            })
+            .catch((error) => alert("Erro ao processar a solicitação."));
+    });
+
+    // Excluir meta
+    document.querySelectorAll(".excluir-transacao").forEach((button) => {
+        button.addEventListener("click", function (e) {
+            e.preventDefault();
+            const metaId = this.getAttribute("data-id");
+
+            if (confirm("Deseja realmente excluir esta meta?")) {
+                fetch(`/metas/excluir/${metaId}/`, {
+                    method: "POST",
+                    headers: { "X-CSRFToken": getCSRFToken() },
+                })
+                    .then((response) => response.json())
+                    .then((data) => {
+                        if (data.success) {
+                            alert("Meta excluída com sucesso!");
+                            location.reload();
+                        } else {
+                            alert("Erro ao excluir a meta.");
+                        }
+                    });
             }
-            leitor.readAsDataURL(arquivo);
-        }
+        });
     });
 
-    // Formata o input de valor
-    const inputValor = document.getElementById('valor_meta');
-    inputValor.addEventListener('input', function(e) {
-        let valor = e.target.value.replace(/\D/g, '');
-        valor = (parseFloat(valor) / 100).toFixed(2);
-        e.target.value = valor;
-    });
+    // Obter CSRF Token
+    function getCSRFToken() {
+        const cookies = document.cookie.split(";");
+        for (let cookie of cookies) {
+            const [name, value] = cookie.trim().split("=");
+            if (name === "csrftoken") return value;
+        }
+        return null;
+    }
 });
 
-function abrirModalMeta() {
-    const modal = document.getElementById('modalMeta');
-    modal.style.display = 'block';
-    document.body.style.overflow = 'hidden';
-}
-
-function fecharModalMeta() {
-    const modal = document.getElementById('modalMeta');
-}
-
 function toggleMenu(element) {
-    const menu = element.nextElementSibling;
-    menu.style.display = menu.style.display === "block" ? "none" : "block";
-  }
-  
-  // Fechar o menu ao clicar fora dele
-  document.addEventListener('click', function(event) {
-    const menus = document.querySelectorAll('.menu');
-    menus.forEach(menu => {
-        if (!menu.contains(event.target) && !menu.previousElementSibling.contains(event.target)) {
-            menu.style.display = 'none';
+    const menu = element.nextElementSibling; // Obtém o próximo elemento irmão (o menu)
+    const menusAtivos = document.querySelectorAll(".menu");
+
+    // Fecha outros menus abertos
+    menusAtivos.forEach((ativo) => {
+        if (ativo !== menu) {
+            ativo.style.display = "none";
         }
     });
-  });
-  document.addEventListener('DOMContentLoaded', () => {
-    const modal = document.getElementById('modal-valor-meta');
-    const form = document.getElementById('form-valor-meta');
-    let metaId = null;
 
-    // Abrir o modal ao clicar no botão
-    window.abrirModalValorMeta = (button) => {
-        metaId = button.dataset.metaId; // Pega o ID da meta do botão clicado
-        modal.style.display = 'flex'; // Exibe o modal
-    };
+    // Alterna a exibição do menu atual
+    if (menu.style.display === "block") {
+        menu.style.display = "none";
+    } else {
+        menu.style.display = "block";
+    }
+}
 
-    // Fechar o modal
-    window.fecharModalValorMeta = () => {
-        modal.style.display = 'none'; // Esconde o modal
-    };
+// Fecha o menu ao clicar fora
+document.addEventListener("click", function (e) {
+    const isDots = e.target.closest(".dots");
+    const isMenu = e.target.closest(".menu");
 
-    // Submeter o formulário
-    form.addEventListener('submit', async (e) => {
-        e.preventDefault(); // Impede o envio padrão do formulário
-        
-        // Captura o valor do input e remove espaços extras
-        const valorInput = document.getElementById('valor_meta');
-        let valor = valorInput.value.trim();  // Remove espaços extras do valor inserido
-    
-        // Verifica se o valor está vazio ou se não é um número válido
-        if (!valor || isNaN(parseFloat(valor))) {
-            alert('Por favor, insira um valor válido.');
-            return;
-        }
-    
-        try {
-            const csrfToken = document.querySelector('[name=csrfmiddlewaretoken]').value;
-    
-            // Faz a requisição POST ao backend com o valor corretamente convertido para float
-            const response = await fetch(`/metas/atualizar-meta/${metaId}/`, {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                    'X-CSRFToken': csrfToken
-                },
-                body: JSON.stringify({ valor_meta: parseFloat(valor) }) // Converte para número float
-            });
-    
-            if (response.ok) {
-                const result = await response.json();
-                alert('Meta atualizada com sucesso!');
-                // Atualize o DOM, se necessário
-            } else {
-                const errorData = await response.json();
-                alert(`Erro ao atualizar a meta: ${errorData.message || 'Erro desconhecido.'}`);
-            }
-        } catch (error) {
-            console.error('Erro:', error);
-            alert('Ocorreu um erro inesperado.');
-        }
-    
-        modal.style.display = 'none'; // Fecha o modal após o envio
+    if (!isDots && !isMenu) {
+        document.querySelectorAll(".menu").forEach((menu) => {
+            menu.style.display = "none";
+        });
+    }
+});
+
+function atualizarProgresso(meta_id, valor_atual, valor_meta) {
+    if (valor_meta === 0) {
+        console.error("O valor da meta não pode ser 0.");
+        return;
+    }
+    let porcentagem = (valor_atual / valor_meta) * 100;
+    porcentagem = Math.min(Math.max(porcentagem, 0), 100);
+    const barraProgresso = document.querySelector(`#barra-progresso-${meta_id} .progresso`);
+    barraProgresso.style.width = `${porcentagem}%`;
+}
+
+document.addEventListener("DOMContentLoaded", function () {
+    const metas = [
+        {
+            id: 1,
+            valor_atual: parseFloat(document.querySelector("#meta-1-valor-atual").textContent.replace('R$', '').trim()),
+            valor_meta: parseFloat(document.querySelector("#meta-1-valor-meta").textContent.replace('R$', '').trim()),
+        },
+        {
+            id: 2,
+            valor_atual: parseFloat(document.querySelector("#meta-2-valor-atual").textContent.replace('R$', '').trim()),
+            valor_meta: parseFloat(document.querySelector("#meta-2-valor-meta").textContent.replace('R$', '').trim()),
+        },
+    ];
+
+    metas.forEach((meta) => {
+        atualizarProgresso(meta.id, meta.valor_atual, meta.valor_meta);
     });
-    
-    
 });

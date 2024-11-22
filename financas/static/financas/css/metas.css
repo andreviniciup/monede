@@ -307,18 +307,19 @@
 
 .barra-progresso {
   width: 100%;
-  height: 4px;
-  background-color: #E5E5E5;
-  border-radius: 2px;
-  overflow: hidden;
+  height: 10px; /* Altura ajustável */
+  background-color: #E5E5E5; /* Cor cinza para a barra de fundo */
+  border-radius: 5px; /* Borda arredondada */
+  overflow: hidden; /* Garantir que o progresso não ultrapasse */
 }
 
 .progresso {
   height: 100%;
-  background-color: #3F9DAC;
-  border-radius: 2px;
-  transition: width 0.3s ease;
+  background-color: #3F9DAC; /* Cor azul para o progresso */
+  border-radius: 5px; /* Borda arredondada para o progresso */
+  transition: width 0.3s ease; /* Animação suave para a mudança de largura */
 }
+
 
 /* Cores das categorias */
 .sobreposicao-padrao { background-color: #3F9DAC; }

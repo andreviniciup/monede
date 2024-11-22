@@ -22,17 +22,17 @@
         <div class="conteudo-extrato">
             <div class="receita">
                 <div>Receita</div>
-                <div class="receita-usuario">R$ {{ receita|floatformat:2 }}</div>
+                <div class="receita-usuario">R$11.345</div>
             </div>
 
             <div class="despesas">
                 <div>Despesas</div>
-                <div class="despesa-usuario">R${{ despesas|floatformat:2 }}</div>
+                <div class="despesa-usuario">R$7.679</div>
             </div>
 
-            <div class="botao-ver-balanco">
-                <div class="vector"></div>
-                <div>Ver Balanço</div>
+            <div class="balanço">
+                <div>Balanço</div>
+                <div class="despesa-usuario">R$3.666</div>
             </div>
         </div>
     </div>
@@ -50,7 +50,7 @@
             </div>
             <div class="transacao-info">
                 <div class="transacao-nome">{{ transacao.titulo }}</div>
-                <div class="transacao-data">{{ transacao.data|date:"d/m/Y H:i" }}</div>
+                <div class="transacao-data">{{ transacao.data|date:"d/m/Y" }}</div>
             </div>
             <div class="transacao-valor">{{ transacao.valor }}</div>
         </div>

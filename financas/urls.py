@@ -22,9 +22,10 @@ urlpatterns = [
     path('metas/', views.lista_metas_view, name='metas'), 
     path('metas/criar/', views.criar_meta_view, name='criar-meta'), 
     path('metas/atualizar-meta/<int:meta_id>/', views.atualizar_meta, name='atualizar-meta'),
+    path('metas/editar/<int:meta_id>/', views.editar_meta_view, name='editar-meta'),
+    path('metas/excluir/<int:meta_id>/', views.excluir_meta_view, name='excluir-meta'),
 
     # Página de plano de gastos
-    path('plano_de_gastos/', views.plano_de_gastos_view, name='plano_de_gastos'),  
 
     # pagina de pagamentos
     path('pagamentos/', views.pagamentos_lista, name='pagamentos'),
