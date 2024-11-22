@@ -14,6 +14,9 @@ urlpatterns = [
 
     # Página de relatórios
     path('relatorios/', views.relatorios_view, name='relatorios'),
+    path('get_expenses_over_time/<str:period>/', views.get_expenses_over_time, name='get_expenses_over_time'),
+    path('get_expenses_by_category/', views.get_expenses_by_category, name='get_expenses_by_category'),
+    path('get_financial_balance/', views.get_financial_balance, name='get_financial_balance'),
 
     # Rota para listagem de metas
     path('metas/', views.lista_metas_view, name='metas'), 
