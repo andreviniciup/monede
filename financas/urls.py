@@ -26,9 +26,9 @@ urlpatterns = [
     # pagina de pagamentos
     path('pagamentos/', views.pagamentos_lista, name='pagamentos'),
     path('pagamentos/adicionar/', views.adicionar_pagamento, name='adicionar_pagamento'),
-    path('pagamentos/<int:pagamento_id>/processar/', views.processar_pagamento, name='processar_pagamento'),
-
-
+    path('pagamentos/pagar_conta/', views.pagar_conta, name='pagar_conta'),
+    path('api/pagamento/<int:pagamento_id>/', views.api_detalhe_pagamento, name='api_detalhe_pagamento'),
+    path('api/contas_cartoes_disponiveis/', views.api_contas_cartoes_disponiveis, name='api_contas_cartoes_disponiveis'),
 
     # Endpoints para ações específicas
     path('carteira/', views.carteira_views, name='meus_cartoes'),

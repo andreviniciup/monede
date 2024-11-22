@@ -443,28 +443,33 @@ def atualizar_meta(request, meta_id):
 
     return JsonResponse({'error': 'Método não permitido.'}, status=405)
 
+
+
 def pagamentos_lista(request):
     hoje = timezone.now().date()
 
-    # Obtenha todos os pagamentos, sem filtrar por usuário
-    pagamentos_hoje = Pagamento.objects.filter(data_vencimento=hoje)
-    proximos_pagamentos = Pagamento.objects.filter(
-        data_vencimento__range=[hoje, hoje + timedelta(days=7)]
-    ).exclude(data_vencimento=hoje)
-    pagamentos_atrasados = Pagamento.objects.filter(
-        data_vencimento__lt=hoje,
-        status='pendente'
-    )
-
+    # Primeiro e último dia do mês
     primeiro_dia_mes = hoje.replace(day=1)
     ultimo_dia_mes = (primeiro_dia_mes + timedelta(days=32)).replace(day=1) - timedelta(days=1)
+
+    # Filtrar pagamentos
+    pagamentos_hoje = Pagamento.objects.filter(data_vencimento=hoje)
+    pagamentos_semana = Pagamento.objects.filter(
+        data_vencimento__range=[hoje + timedelta(days=1), hoje + timedelta(days=7)]
+    )
     pagamentos_mes = Pagamento.objects.filter(
-        data_vencimento__range=[primeiro_dia_mes, ultimo_dia_mes]
+        data_vencimento__range=[hoje + timedelta(days=1), ultimo_dia_mes]
+    )  # Apenas futuros deste mês
+    pagamentos_atrasados = Pagamento.objects.filter(
+        data_vencimento__lt=hoje,
+        data_vencimento__gte=primeiro_dia_mes,
+        status='pendente'
     )
 
     context = {
         'pagamentos_hoje': pagamentos_hoje,
-        'proximos_pagamentos': proximos_pagamentos,
+        'pagamentos_semana': pagamentos_semana,
+        'pagamentos_mes': pagamentos_mes,
         'pagamentos_atrasados': pagamentos_atrasados,
         'total_pagamentos_mes': pagamentos_mes.count(),
         'valor_total_mes': sum(p.valor for p in pagamentos_mes),
@@ -472,24 +477,111 @@ def pagamentos_lista(request):
 
     return render(request, 'financas/pagamentos.html', context)
 
+
+
 def adicionar_pagamento(request):
     if request.method == 'POST':
         form = PagamentoForm(request.POST)
         if form.is_valid():
-            pagamento = form.save(commit=False)
-            # Remova o pagamento.usuario para não exigir um usuário
-            pagamento.save()
-            return JsonResponse({'status': 'success'})
-        return JsonResponse({'status': 'error', 'errors': form.errors})
-    return JsonResponse({'status': 'error', 'message': 'Método não permitido'})
+            try:
+                pagamento = form.save(commit=False)
+                pagamento.save()
+                return JsonResponse({'status': 'success'})
+            except Exception as e:
+                # Log do erro no console para depuração
+                print(f"Erro ao salvar pagamento: {e}")
+                return JsonResponse({'status': 'error', 'errors': 'Erro interno no servidor.'})
+        else:
+            return JsonResponse({'status': 'error', 'errors': form.errors})
+    return JsonResponse({'status': 'error', 'message': 'Método não permitido'}, status=405)
 
-def processar_pagamento(request, pagamento_id):
-    pagamento = get_object_or_404(Pagamento, id=pagamento_id)
+def pagar_conta(request):
     if request.method == 'POST':
+        # Pega os dados do POST
+        pagamento_id = request.POST.get('pagamento_id')
+        tipo_entidade = request.POST.get('tipo')  # 'conta' ou 'cartao'
+        entidade_id = request.POST.get('entidade_id')  # ID da Conta ou do Cartão
+
+        # Valida os dados
+        if not pagamento_id or not tipo_entidade or not entidade_id:
+            return JsonResponse({'status': 'error', 'message': 'Dados incompletos'}, status=400)
+
+        pagamento = get_object_or_404(Pagamento, id=pagamento_id)
+
+        if tipo_entidade == 'conta':
+            conta = get_object_or_404(Conta, id=entidade_id)
+            if conta.saldo < pagamento.valor:
+                return JsonResponse({'status': 'error', 'message': 'Saldo insuficiente'}, status=400)
+
+            # Deduz o valor do saldo
+            conta.saldo -= pagamento.valor
+            conta.save()
+        elif tipo_entidade == 'cartao':
+            cartao = get_object_or_404(Cartao, id=entidade_id)
+            if cartao.limite < pagamento.valor:
+                return JsonResponse({'status': 'error', 'message': 'Limite insuficiente'}, status=400)
+
+            # Deduz o valor do limite
+            cartao.limite -= pagamento.valor
+            cartao.save()
+        else:
+            return JsonResponse({'status': 'error', 'message': 'Tipo de entidade inválido'}, status=400)
+
+        # Atualiza o status do pagamento
         pagamento.status = 'pago'
         pagamento.save()
-        return JsonResponse({'status': 'success'})
-    return JsonResponse({'status': 'error', 'message': 'Método não permitido'})
+
+        # Retorna uma resposta de sucesso
+        return JsonResponse({'status': 'success', 'message': 'Pagamento realizado com sucesso'})
+
+    return JsonResponse({'status': 'error', 'message': 'Método não permitido'}, status=405)
+
+def api_detalhe_pagamento(request, pagamento_id):
+    pagamento = get_object_or_404(Pagamento, id=pagamento_id)
+    return JsonResponse({
+        'id': pagamento.id,
+        'titulo': pagamento.titulo,
+        'valor': pagamento.valor,
+        'data_vencimento': pagamento.data_vencimento.isoformat(),
+    })
+
+def api_contas_cartoes_disponiveis(request):
+    if request.method == 'GET':
+        # Buscando contas associadas aos bancos
+        contas = Conta.objects.all().select_related('banco')
+        cartoes = Cartao.objects.all().select_related('banco')
+
+        # Construindo a lista de contas
+        contas_data = [
+            {
+                'id': conta.id,
+                'tipo': 'Conta Corrente',
+                'nome': conta.titulo,
+                'saldo': float(conta.saldo),  # Convertendo Decimal para float para compatibilidade JSON
+                'banco': conta.banco.nome if conta.banco else 'Sem Banco',
+            }
+            for conta in contas
+        ]
+
+        # Construindo a lista de cartões
+        cartoes_data = [
+            {
+                'id': cartao.id,
+                'tipo': 'Cartão de Crédito',
+                'nome': cartao.nome_cartao,
+                'limite': float(cartao.limite_total),  # Convertendo Decimal para float para compatibilidade JSON
+                'banco': cartao.banco.nome if cartao.banco else 'Sem Banco',
+            }
+            for cartao in cartoes
+        ]
+
+        # Combinando contas e cartões
+        contas_cartoes = contas_data + cartoes_data
+
+        return JsonResponse(contas_cartoes, safe=False)
+
+    return JsonResponse({"error": "Método não permitido"}, status=405)
+
 
 
 def plano_de_gastos_view(request):

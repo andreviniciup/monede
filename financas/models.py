@@ -171,14 +171,17 @@ class Pagamento(models.Model):
         ('pendente', 'Pendente'),
         ('pago', 'Pago'),
         ('atrasado', 'Atrasado'),
+        ('vence_hoje', 'Vence Hoje'),
     ]
     
-    usuario = models.ForeignKey(User, on_delete=models.CASCADE)
+    
     titulo = models.CharField(max_length=200)
     valor = models.DecimalField(max_digits=10, decimal_places=2)
     data_vencimento = models.DateField()
     frequencia = models.CharField(max_length=10, choices=FREQUENCIA_CHOICES)
-    status = models.CharField(max_length=10, choices=STATUS_CHOICES, default='pendente')
+    status = models.CharField(max_length=15, choices=STATUS_CHOICES, default='pendente')
+    forma_pagamento = models.CharField(max_length=200, null=True, blank=True)
+    categoria = models.CharField(max_length=255, blank=True, null=True)  # Determinada por ML
     data_criacao = models.DateTimeField(auto_now_add=True)
     ultima_atualizacao = models.DateTimeField(auto_now=True)
 
@@ -189,7 +192,22 @@ class Pagamento(models.Model):
         return f"{self.titulo} - R${self.valor} ({self.get_status_display()})"
 
     def esta_atrasado(self):
+        """Verifica se o pagamento está atrasado."""
         return self.data_vencimento < timezone.now().date() and self.status == 'pendente'
+
+    def atualizar_status(self):
+        """Atualiza automaticamente o status com base na data."""
+        hoje = timezone.now().date()
+        if self.status == 'pago':  # Não alterar pagamentos já quitados
+            return
+        if self.data_vencimento < hoje:
+            self.status = 'atrasado'
+        elif self.data_vencimento == hoje:
+            self.status = 'vence_hoje'
+        else:
+            self.status = 'pendente'
+        self.save()
+
 
 class Banco(models.Model):
     codigo = models.CharField(max_length=10, unique=True)
