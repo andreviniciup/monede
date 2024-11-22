@@ -3,7 +3,7 @@ from typing import List, Dict, Tuple
 from enum import Enum
 from decimal import Decimal
 from django.db.models import QuerySet
-from django.db.models.functions import ExtractMonth, ExtractYear
+from django.db.models.functions import ExtractMonth, ExtractYear, ExtractDay, ExtractWeek
 from django.db.models import Sum
 from datetime import datetime
 
@@ -260,3 +260,72 @@ class FinancialAnalyzer:
             }
         except Exception as e:
             raise ValueError(f"Erro na geração do resumo mensal: {str(e)}")
+
+    def get_expenses_over_time(self, queryset: QuerySet, period: str = 'daily') -> List[float]:
+        """
+        Obtém os gastos ao longo do tempo.
+        
+        Args:
+            queryset: QuerySet de Transacao
+            period: 'daily', 'weekly', 'biweekly', 'monthly'
+        """
+        try:
+            transactions = queryset.filter(tipo='DESPESA').values('data', 'valor')
+            expenses = []
+
+            if period == 'daily':
+                expenses = transactions.annotate(day=ExtractDay('data')).values('day').annotate(total=Sum('valor')).order_by('day')
+            elif period == 'weekly':
+                expenses = transactions.annotate(week=ExtractWeek('data')).values('week').annotate(total=Sum('valor')).order_by('week')
+            elif period == 'biweekly':
+                expenses = transactions.annotate(week=ExtractWeek('data')).values('week').annotate(total=Sum('valor')).order_by('week')
+                expenses = [sum(expenses[i:i+2]) for i in range(0, len(expenses), 2)]
+            elif period == 'monthly':
+                expenses = transactions.annotate(month=ExtractMonth('data')).values('month').annotate(total=Sum('valor')).order_by('month')
+
+            return [float(expense['total']) for expense in expenses]
+        except Exception as e:
+            raise ValueError(f"Erro ao obter gastos ao longo do tempo: {str(e)}")
+
+    def get_expenses_by_category(self, queryset: QuerySet) -> Dict[str, float]:
+        """
+        Obtém os gastos por categoria.
+        
+        Args:
+            queryset: QuerySet de Transacao
+        """
+        try:
+            transactions = queryset.filter(tipo='DESPESA').values('categoria__nome').annotate(total=Sum('valor')).order_by('categoria__nome')
+            return {trans['categoria__nome']: float(trans['total']) for trans in transactions}
+        except Exception as e:
+            raise ValueError(f"Erro ao obter gastos por categoria: {str(e)}")
+
+    def get_financial_balance(self, queryset: QuerySet) -> Dict[str, List[float]]:
+        """
+        Obtém o balanço financeiro (receitas vs despesas).
+        
+        Args:
+            queryset: QuerySet de Transacao
+        """
+        try:
+            transactions = queryset.values('data', 'valor', 'tipo')
+            balance = {'labels': [], 'income': [], 'expenses': []}
+
+            monthly_transactions = transactions.annotate(month=ExtractMonth('data'), year=ExtractYear('data')).values('year', 'month', 'tipo').annotate(total=Sum('valor')).order_by('year', 'month')
+
+            for trans in monthly_transactions:
+                label = f"{trans['year']}-{trans['month']:02d}"
+                if label not in balance['labels']:
+                    balance['labels'].append(label)
+                    balance['income'].append(0)
+                    balance['expenses'].append(0)
+
+                index = balance['labels'].index(label)
+                if trans['tipo'] == 'RECEITA':
+                    balance['income'][index] += float(trans['total'])
+                else:
+                    balance['expenses'][index] += float(trans['total'])
+
+            return balance
+        except Exception as e:
+            raise ValueError(f"Erro ao obter balanço financeiro: {str(e)}")

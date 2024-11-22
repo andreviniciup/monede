@@ -328,6 +328,11 @@ def relatorios_view(request):
                         months_ahead=3)[0]
                 }
 
+        # Dados para os gráficos
+        expenses_over_time = analyzer.get_expenses_over_time(transacoes, period='daily')
+        expenses_by_category = analyzer.get_expenses_by_category(transacoes)
+        financial_balance = analyzer.get_financial_balance(transacoes)
+
         context = {
             'variacoes': variacoes,
             'tendencias': {k: v.value for k, v in tendencias.items()},
@@ -338,8 +343,11 @@ def relatorios_view(request):
             'analise_cartoes': analise_cartoes,
             'analise_limites': analise_limites,
             'mes_atual': hoje.strftime("%B %Y"),
+            'expenses_over_time': expenses_over_time,
+            'expenses_by_category': expenses_by_category,
+            'financial_balance': financial_balance,
             'erro': None
-            }
+        }
         
     except Exception as e:
         context = {
@@ -855,3 +863,21 @@ def criar_subcategoria(request):
         else:
             messages.error(request, "Erro ao criar a subcategoria. Verifique os dados do formulário.")
     return redirect('subcategorias')
+
+def get_expenses_over_time(request, period):
+    analyzer = FinancialAnalyzer()
+    transacoes = Transacao.objects.all()
+    expenses = analyzer.get_expenses_over_time(transacoes, period)
+    return JsonResponse({'expenses': expenses})
+
+def get_expenses_by_category(request):
+    analyzer = FinancialAnalyzer()
+    transacoes = Transacao.objects.all()
+    expenses_by_category = analyzer.get_expenses_by_category(transacoes)
+    return JsonResponse({'expenses_by_category': expenses_by_category})
+
+def get_financial_balance(request):
+    analyzer = FinancialAnalyzer()
+    transacoes = Transacao.objects.all()
+    balance = analyzer.get_financial_balance(transacoes)
+    return JsonResponse(balance)
